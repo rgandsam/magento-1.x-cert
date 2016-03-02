@@ -165,3 +165,8 @@ configuration values and areas?
 `Mage::getStoreConfig()`, `Mage_Core_Model_Config (through Mage::getConfig())`
 
 ######How are per-store configuration values established in the XML DOM?
+
+######What is the structure of event observers, and how are properties
+accessed therein?
+
+Event observers are instances of Varien_Event_Observer. Varien_Event_Observer extends from Varien_Object, so properties in an observer can be retrieved/assigned with the “magic getters and setters.” Varien_Event_Observer also has a number of predefined getters and setters, such as get/setCallback, get/setName, and others, so they can also be used.
