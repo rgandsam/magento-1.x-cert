@@ -166,7 +166,34 @@ configuration values and areas?
 
 ######How are per-store configuration values established in the XML DOM?
 
+######By what process do the factory methods and autoloader enable class
+instantiation?
+
+######Which class types have configured prefixes, and how does this relate to
+class overrides?
+
+Models, Resource Models, Helpers, and Blocks all have configured prefixes. Classes can be overridden in the module’s etc/config.xml file. Inside the models, helpers, or blocks node add a module identifier node, followed by the rewrite node. Inside the rewrite node, add a node for the class name that you want to override. It’s value should be set to your overriding class name.
+
+######Which class types and files have explicit paths?
+
+Templates, layout files, and controllers all have explicit paths.
+
+######What are the interface and configuration options for automatically fired
+events?
+
+
+
+######What configuration parameters are available for event observers?
+
+- class, which specifies the class to use
+- method, which sets the method to call
+- type, which sets how to retrieve the class (e.g., model, singleton, etc.)
+
 ######What is the structure of event observers, and how are properties
 accessed therein?
 
 Event observers are instances of Varien_Event_Observer. Varien_Event_Observer extends from Varien_Object, so properties in an observer can be retrieved/assigned with the “magic getters and setters.” Varien_Event_Observer also has a number of predefined getters and setters, such as get/setCallback, get/setName, and others, so they can also be used.
+
+######What configuration parameters are available for cron jobs?
+
+The following configuration parameters are available for cron jobs: `<schedule><cron_expr></cron_expr></schedule>` and `<run><model></model></run>`, which specifies which model/method (separated by a double colon) to run.
