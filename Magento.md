@@ -152,22 +152,28 @@ Cron jobs can be set up in Magento inside a modules config.xml file.
   </crontab>
 </config>
 
+####XML-DOM
+
 ######How does the framework discover active modules and their
 configuration?
 
 *See `Mage_Core_Model_Config`.
 
-Active modules and their configuration are discovered by going into the app/etc/modules/ directory and grabbing every XML file in the directory. The files are then looped through and checked to ensure that the modules are active.
+Active modules and their configuration are discovered by going into the app/etc/modules/ directory and grabbing every XML file in the directory. The files are then looped through and checked to ensure that the modules are active. The framework then loads the module config files from each modules etc/ directory (Mage_Core_Model_Config->loadModulesConfiguration()) and adds them to the mammoth config object.
 
 ######What are the common methods with which the framework accesses its
 configuration values and areas?
 
-`Mage::getStoreConfig()`, `Mage_Core_Model_Config (through Mage::getConfig())`
+`Mage::getStoreConfig()`, `Mage_Core_Model_Config (through Mage::app()->getConfig()->getNode() or Mage::getConfig->getNode()` and `Mage::getStoreConfigFlag()`
 
 ######How are per-store configuration values established in the XML DOM?
 
+Per-store configuration values are read from the database (takes place in Mage_Core_Model_Config->_loadDb) or from the module config files (in the Mage_Core_Model_Config->loadModulesConfiguration function). They are stored in Mage_Core_Model_Config->_xml->stores property, and can be accessed with Mage::getConfig()->getNode() or Mage::getStoreConfig().
+
 ######By what process do the factory methods and autoloader enable class
 instantiation?
+
+The factory methods, depending on which is being called, either look in the registry for an existing object and then instantiate if not found (singleton and helper), or just instantiate a new object (model and block), by translating the name into a string like this: Namespace_Modulename_Model_Class. The framework first looks for the class by checking if it's path is registered in the config tree. The autoloader then replaces the underscores with directory separators and includes the file path. If the class is not found, an error is thrown. The factory method then instantiates the class, and returns it.
 
 ######Which class types have configured prefixes, and how does this relate to
 class overrides?
@@ -181,7 +187,7 @@ Templates, layout files, and controllers all have explicit paths.
 ######What are the interface and configuration options for automatically fired
 events?
 
-
+Magento fires off different default events in the system, often related to the loading of data. These events enable you to edit data or otherwise add functionality without overriding code.
 
 ######What configuration parameters are available for event observers?
 
@@ -197,3 +203,21 @@ Event observers are instances of Varien_Event_Observer. Varien_Event_Observer ex
 ######What configuration parameters are available for cron jobs?
 
 The following configuration parameters are available for cron jobs: `<schedule><cron_expr></cron_expr></schedule>` and `<run><model></model></run>`, which specifies which model/method (separated by a double colon) to run.
+
+####Internationalization
+
+#2. Request flow
+####Application initialization
+######Describe the steps for application initialization
+1. Magento routes all requests through index.php, which checks PHP versions, includes the compiler (if so configured), and includes the Mage class. It does some processing as well to set if Magento is running a store or a website.
+2. The Mage class then takes over, with the method `run` being called. The run method sets the root directory for Magento and instantiates the Mage_Core_Model_App class, which is the Magento application. It also creates an event collection at this point.
+3. The Mage_Core_Model_App->run method is shortly called, and it initializes the PHP environment and the basic configuration (app/etc/local.xml, app/etc/config.xml) and the cache. After initializing these, the run method checks to see it the appropriate response is cached. If so, it returns it. If not, the modules are initialized and the area is loaded. The method ensures that the local config (DB connection, etc.) is loaded, and then passes the request to the front controller. The application is now initialized.
+
+######Describe the role of the system entrypoint, index.php
+
+The index.php file has several important roles.
+- It checks the PHP version for compatibility.
+- It checks and if found, includes, the compiler configuration.
+- It checks for a maintenance file, and includes that if found.
+- Index.php includes the Mage class and the bootstrap file.
+- It determines if the request pertains to a store or a website, and then it calls the all-important `Mage::run()` method.
