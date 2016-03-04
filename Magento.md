@@ -206,6 +206,67 @@ The following configuration parameters are available for cron jobs: `<schedule><
 
 ####Internationalization
 
+#######Describe how to plan for internationalization of a Magento site
+
+Internationalization is fairly easy in Magento. You will have a unique store view for each language you are using. You can then assign the different store views to sub-directories or sub-domains in Magento. Store views can be created in the admin panel in System->Manage Stores. Once you create a store view, you will need to download the language packs from Magento and configure the store view's locale information appropriately (this is in system config).
+
+#######Describe the use of Magento translate classes and translate files
+
+Magento translate files can be obtained from Magento Connect and are placed in the app/locale folder. They are comma-separated strings with english strings and foreign language equivalents. The Mage_Core_Model_Translate class loads the translation files from the translate/modules node in the config tree, the theme translations in the theme's locale/[languagecode]_[countrycode]/translate.csv and the translation rows from the core_translate table. The data is then pulled out in pairs and stored in Mage_Core_Model_Translate's _data property. When a helper/block's `__()` method is called, the class looks for the string in the config tree. If found, it returns the foreign-language equivalent.
+
+######Describe the advantages and disadvantages of using subdomains and subdirectories
+in internationalization
+
+Subdomains are better because they provide a more "finished" look and national brand. They are also easier, slightly, to link content with, and can be hosted on separate servers which allows for localizing boxes by country or region.  However, subdirectories are better because they increase search engine ratings for the main site. Subdirectories increase name recognition for the main brand. All in all, both are viable options.
+
+######Which method is used for translating strings, and on which types of
+objects is it generally available?
+
+The `__('Your string here')` method is used for translating strings. It is generally available on blocks and helpers.
+
+######In what way does the developer mode influence how Magento handles
+translations?
+
+When the developer mode is set, all translations not related to a module are removed. Only module level translations are allowed.
+
+######How many options exist to add a custom translation for any given
+string?
+
+There are three options:
+
+1. The core_translate table in the database
+2. The theme's translations files (app/design/[area]/[package]/[theme]/locale/[languagecode][countrycode]/translate.csv)
+3. Module-level translation files (registered in the config.xml file and stored in app/locale/[languagecode]_[countrycode]/[namespace]_[module].csv)
+
+You register module-level translation files in config.xml like this:
+
+```
+<config>
+  <area>
+    <translate>
+      <modules>
+        <Namespace_Modulename>
+          <files>
+            <default>Your_File</default>
+          </files>
+        </Namespace_Modulename>
+      </modules>
+    </translate>
+  </area>
+</config>
+```
+
+######What is the priority of translation options?
+
+1. Translations from the core_translate table
+2. Translations from the theme's translations files
+3. Module-level translations
+
+######How are translation conflicts (when two modules translate the same
+string) processed by Magento?
+
+Magento handles translation conflicts by prefixing the duplicated string with it's Namespace_Modulename. You can specify to use Namespace_Modulename:String in your code.
+
 #2. Request flow
 ####Application initialization
 ######Describe the steps for application initialization
@@ -221,3 +282,22 @@ The index.php file has several important roles.
 - It checks for a maintenance file, and includes that if found.
 - Index.php includes the Mage class and the bootstrap file.
 - It determines if the request pertains to a store or a website, and then it calls the all-important `Mage::run()` method.
+
+######How and when is the include path set up and the auto loader registered?
+
+The include path is set up in the beginning of the Mage.php file, before the Mage class definition, by loading the different code pools into one include path and combining it with the original include path. The autoloader is included after the include path is set up, and the auto loader registers itself with `spl_autoload_register` in it's register method.
+
+######How and when does Magento load the base configuration, the module
+configuration, and the database configuration?
+
+Magento loads the base configuration as the first step in the Mage_Core_Model_App->run() method by grabbing and parsing all the XML files in the app/etc folder. The module configuration is loaded next, with the _initModules method. It (and it's called functions) grab and parse all the module declaration *.xml files in app/etc/modules. It then loads the config.xml files from the etc directories. The database configuration is then loaded with the config->loadDb method. It loads the configuration values stored in the DB into the XML tree.
+
+######How and when are the two main types of setup script executed?
+
+Install/update scripts are run in the Mage_Core_Model_Resource_Setup::applyAllUpdates() function after the local.xml file is loaded. The function runs any necessary updates (determining any necessary upgrades by comparing the version stored in the database to the version in the configuration file).
+
+######When are the request and response objects initialized?
+
+The request object is initialized in the Mage_Core_Model_App->_initRequest() function, through the Mage_Core_Model_App->getRequest() function, which instantiates the object if it does not exist yet, and returns it.
+
+The response object is initialized in the Mage_Core_Model_App->getResponse() function, like the getRequest function. It is initially called in the Mage_Core_Controller_Varien_Front->getResponse function, as a parameter of instantiating the controller class.
