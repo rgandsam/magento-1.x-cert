@@ -296,8 +296,26 @@ Magento loads the base configuration as the first step in the Mage_Core_Model_Ap
 
 Install/update scripts are run in the Mage_Core_Model_Resource_Setup::applyAllUpdates() function after the local.xml file is loaded. The function runs any necessary updates (determining any necessary upgrades by comparing the version stored in the database to the version in the configuration file).
 
+Data scripts are run after the local configuration is loaded and the store and request are initiated, by the Mage_Core_Model_Resource_Setup::applyAllDataUpdates(). Its method of actions is fairly similar to the updates function.
+
+###### When does Magento decide which store view to use, and when is the
+current locale set?
+
+The store view is decided in the Mage_Core_Model_App->_initCurrentStore() function. The locale is set when system configuration is loaded in.
+
+######Which ways exist in Magento to specify the current store view?
+
+1. Environment variables ($_SERVER['MAGE_RUN_CODE'], set in index.php)
+2. Cookies (the store cookie and the Mage_Core_Model_App->_checkCookieStore() function)
+3. The HTTP GET parameter `__store` (Mage_Core_Model_App->_checkGetStore())
+
 ######When are the request and response objects initialized?
 
 The request object is initialized in the Mage_Core_Model_App->_initRequest() function, through the Mage_Core_Model_App->getRequest() function, which instantiates the object if it does not exist yet, and returns it.
 
 The response object is initialized in the Mage_Core_Model_App->getResponse() function, like the getRequest function. It is initially called in the Mage_Core_Controller_Varien_Front->getResponse function, as a parameter of instantiating the controller class.
+
+####Front Controller
+######Describe the role of the front controller
+
+The role of the front controller (`Mage_Core_Controller_Varien_Front`) is to initialize the routers
