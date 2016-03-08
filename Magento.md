@@ -318,4 +318,80 @@ The response object is initialized in the Mage_Core_Model_App->getResponse() fun
 ####Front Controller
 ######Describe the role of the front controller
 
-The role of the front controller (`Mage_Core_Controller_Varien_Front`) is to initialize the routers
+The role of the front controller (`Mage_Core_Controller_Varien_Front`) is to initialize the routers for the different application areas, match the request to the routes, and send the response.
+
+######Identify uses for events fired in the front controller
+
+Here are some possible uses for events fired in the front controller:
+
+- Modify the request
+- Modify the response (output)
+- Add another router
+- Set cookies
+
+######Which ways exist in Magento to add router classes?
+
+1. In config.xml
+```
+<config>
+  <default>
+    <web>
+      <routers>
+        <routername>
+          <area>areahere</area>
+          <class>Your Router Class Name Here</class>
+        </routername>
+      </routers>
+    </web>
+  </default>
+</config>
+```
+
+2. An event listener on the `controller_front_init_routers` or `controller_front_init_before` event, and calling the addRouter() method
+3. Through the registry: Mage::registry('controller')->addRouter()
+
+######What are the differences between the various ways to add routers?
+
+The event listener method would load the router after the config method. The registry method would be very difficult and would have to be run through an observer.
+
+######Think of possible uses for each of the events fired in the front controller
+
+Here are the events fired in the front controller:
+
+- `controller_front_send_response_before` - could be used to modify output before it is sent, or to set cookies, etc. (Commercebug uses this to add itself)
+- `controller_front_send_response_after` - potentially useful to use like a destructor, for clean-up related tasks. I.E., you want to increment the number of visitors on the site, etc. TALK TO JOSEPH!!
+- `controller_front_init_before` - useful to modify the request/input
+- `controller_front_init_routers` - useful to add new routers
+
+####URL rewrites
+######Describe URL structure/processing in Magento
+
+Magento URL's are made up of the followup structure: `www.yoursite.mag/frontName/controller/action/params/1`. A front name is set by a module and identifies a URL to a module.
+
+Front names are set in config.xml:
+```
+<config>
+  <area>
+    <routers>
+      <moduleName>
+        <use>standard (for frontend) || admin (for backend)</use>
+        <args>
+          <module>Namespace_Modulename</module>
+          <frontName>frontName</frontName>
+        </args>
+      </moduleName>
+    </routers>
+  </area>
+</config>
+```
+
+The front name is then followed by the prefix of the controller you are trying to access (i.e., IndexController = index), and then the prefix of the action you are attempting to run (e.g., viewAction() = view). This is then followed by any parameters in the URL.
+
+######Describe the URL rewrite process
+
+The Magento URL rewrite process allows Magento's API-style urls to become SEO-friendly URLs. The rewrite process involves these steps:
+
+- The `$this->_getRequestRewriteController()->rewrite` method is called in Mage_Core_Controller_Varien_Front.
+- The _getRequestRewriteController method instantiates the Mage_Core_Model_Url_Rewrite_Request class.
+- The Mage_Core_Model_Url_Rewrite_Request->rewrite() method is called. It applies the rewrites from the database and from the config.
+- The rewrites can 
