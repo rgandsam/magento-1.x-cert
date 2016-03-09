@@ -394,4 +394,40 @@ The Magento URL rewrite process allows Magento's API-style urls to become SEO-fr
 - The `$this->_getRequestRewriteController()->rewrite` method is called in Mage_Core_Controller_Varien_Front.
 - The _getRequestRewriteController method instantiates the Mage_Core_Model_Url_Rewrite_Request class.
 - The Mage_Core_Model_Url_Rewrite_Request->rewrite() method is called. It applies the rewrites from the database and from the config.
-- The rewrites can 
+
+######What is the purpose of each of the fields in the core_url_rewrite
+table?
+
+- The id_path field - ?
+- The request_path field specifies an SEO-friendly URL that can be used
+- The target_path field specifies the path to resolve the request_path to.
+- is_system specifies if the URL is rewritten by the system, or is a custom rewrite.
+- options
+- description - custom description
+- store_id - store key
+- category_id
+- product_id
+
+######When does Magento created the rewrite records for categories and
+products?
+
+???
+
+######How and where does Magento find a matching record for the current
+request?
+
+The request is matched to the rewrite in Mage_Core_Model_Url_Rewrite_Request->_rewriteDb. This method calls the Mage_Core_Model_Url_Rewrite->loadByRequestPath method which looks for the request_path to match. If they match, the system assigns the rewritten url to the _aliases property in the Zend_Controller_Request_Http object.
+
+####Request routing
+
+######Describe request routing/request flow in Magento
+
+1. The routers are initialized in Mage_Core_Controller_Varien_Front->init()
+2. The various front names are collected in the init function with the Mage_Core_Controller_Varien_Router_Standard->collectRoutes function
+3. The match function is called on each of the routers. If a match is found, the controller and action names are passed, and the action is dispatched.
+4. The output is sent with the Zend_Controller_Request_Http->sendResponse() function.
+
+######Describe how Magento determines which controller to use and how to customize
+route-to-controller resolution
+
+Magento determines
