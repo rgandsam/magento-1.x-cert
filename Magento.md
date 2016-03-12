@@ -152,6 +152,8 @@ Cron jobs can be set up in Magento inside a modules config.xml file.
   </crontab>
 </config>
 
+```
+
 ####XML-DOM
 
 ######How does the framework discover active modules and their
@@ -332,6 +334,7 @@ Here are some possible uses for events fired in the front controller:
 ######Which ways exist in Magento to add router classes?
 
 1. In config.xml
+2. 
 ```
 <config>
   <default>
@@ -369,6 +372,7 @@ Here are the events fired in the front controller:
 Magento URL's are made up of the followup structure: `www.yoursite.mag/frontName/controller/action/params/1`. A front name is set by a module and identifies a URL to a module.
 
 Front names are set in config.xml:
+
 ```
 <config>
   <area>
@@ -413,8 +417,7 @@ products?
 
 ???Catalog_Model_Url, indexer_url
 
-######How and where does Magento find a matching record for the current
-request?
+######How and where does Magento find a matching record for the current request?
 
 The request is matched to the rewrite in Mage_Core_Model_Url_Rewrite_Request->_rewriteDb. This method calls the Mage_Core_Model_Url_Rewrite->loadByRequestPath method which looks for the request_path to match. If they match, the system assigns the rewritten url to the _aliases property in the Zend_Controller_Request_Http object.
 
@@ -427,7 +430,33 @@ The request is matched to the rewrite in Mage_Core_Model_Url_Rewrite_Request->_r
 3. The match function is called on each of the routers. If a match is found, the controller and action names are passed, and the action is dispatched.
 4. The output is sent with the Zend_Controller_Request_Http->sendResponse() function.
 
-######Describe how Magento determines which controller to use and how to customize
-route-to-controller resolution
+######Describe how Magento determines which controller to use and how to customize route-to-controller resolution
 
-Magento determines
+Magento determines which controller to use by matching the frontname to your module, and matches the controller name from the URL. The route-to-controller resolution process can be customized with a custom router, which is usually stored in the Controller/ folder.
+
+######Which routers exist in a native Magento implementation?
+
+There are five routers in a native Magento implementation: the admin router (Mage_Core_Controller_Varien_Router_Admin), the standard (or frontend) router (Mage_Core_Controller_Varien_Router_Standard), the installation router (Mage_Install_Controller_Router_Install), the CMS router (Mage_Cms_Controller_Router), and the default router (Mage_Core_Controller_Varien_Router_Default).
+
+######How does the standard router map a request to a controller class?
+
+By getting the front name and controller name from the request, and then getting the module associated with that front name. The controller name is then retrieved from the request, and the system merges it all into a path. 
+
+######How does the standard router build the filesystem path to a file that might contain a matching action controller?
+
+See above. The `Mage_Core_Controller_Varien_Router_Standard->getControllerFileName()` method does this. The `Namespace_Modulename` and the controller name are passed in. The `Namespace_Modulename` is split on the `_` character, and is rejoined into an array with only the first two elements remaining. The `controllers` directory is retreived with Mage::getModuleDir('controllers', $moduleName). If there are additional parts (i.e., directories) in the original moduleName, they are appended into the path. The name of the controller is CamelCased and joined with `Controller`. Voila! Magento has built the filesystem path to a file that might contain a matching action controller.
+
+######How does Magento process requests that cannot be mapped?
+
+If a request cannot be matched, Magento will initialize the modules IndexController and call the noRoute action. If there is no module, Magento will by default use the Mage_Cms_Controllers_IndexController class and call the noRoute function.
+
+######After a matching action controller is found, what steps occur before the action method is executed?
+
+- The controller class is instantiated, and it is checked to make sure that the actionMethod is defined.
+- The request's module name, action name, controller name, and controller module are all set.
+- The request parameters are parsed out, and the request is set to dispatched.
+- The dispatch function is called, and the full action method name is retreived. It is then checked again to ensure that the method exists.
+- The controller's preDispatch function is called, and the action method is called, after ensuring that the preDispatch function hasn't changed anything (i.e., set the request to dispatched = false, or the FLAG_NO_DISPATCH is not set).
+
+####Module initialization
+######Describe the steps needed to create and register a new module
