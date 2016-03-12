@@ -411,7 +411,7 @@ table?
 ######When does Magento created the rewrite records for categories and
 products?
 
-???
+???Catalog_Model_Url, indexer_url
 
 ######How and where does Magento find a matching record for the current
 request?
