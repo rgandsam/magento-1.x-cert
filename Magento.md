@@ -369,7 +369,7 @@ Here are the events fired in the front controller:
 ####URL rewrites
 ######Describe URL structure/processing in Magento
 
-Magento URL's are made up of the followup structure: `www.yoursite.mag/frontName/controller/action/params/1`. A front name is set by a module and identifies a URL to a module.
+Magento URL's are made up of the followup structure: `www.baseurl.mag/frontName/controller/action/params/1`. A front name is set by a module and identifies a URL to a module.
 
 Front names are set in config.xml:
 
@@ -460,3 +460,33 @@ If a request cannot be matched, Magento will initialize the modules IndexControl
 
 ####Module initialization
 ######Describe the steps needed to create and register a new module
+
+To create and register a new module, you need to add a `Namespace_Modulename.xml` file to app/etc/modules. Inside, it should look something like this:
+
+```
+<config>
+    <modules>
+        <Namespace_Modulename>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Mage_Core />
+            </depends>
+        </Namespace_Modulename>
+    </modules>
+</config>
+```
+
+The module is created. However, to make it do anything, you need to create a Modulename folder inside your Namespace directory inside your codepool. Inside the Modulename folder, you need to create an etc dir and a config.xml. Now you can wire up helpers, blocks, models, etc.
+
+######Describe the effect of module dependencies
+
+A module dependency causes the module's configuration to be loaded before the depending module's configuration.
+
+######Describe different types of configuration files and the priorities of their loading
+
+There are two main configuration file types in Magento: the `Namespace_Modulename.xml` configuration files in the app/etc/modules directory, and the configuration files in the Namespace/Modulename/etc/ directory. The `Namespace_Modulename.xml` file registers the module with some rudimentary config (codePool, dependencies). 
+
+Inside the Namespace/Modulename/etc directory, things are a little more complicated. The config.xml file contains module-level configuration, such as blocks, helpers, and events. It is loaded first.
+
+######
