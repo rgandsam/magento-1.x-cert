@@ -487,6 +487,34 @@ A module dependency causes the module's configuration to be loaded before the de
 
 There are two main configuration file types in Magento: the `Namespace_Modulename.xml` configuration files in the app/etc/modules directory, and the configuration files in the Namespace/Modulename/etc/ directory. The `Namespace_Modulename.xml` file registers the module with some rudimentary config (codePool, dependencies). 
 
-Inside the Namespace/Modulename/etc directory, things are a little more complicated. The config.xml file contains module-level configuration, such as blocks, helpers, and events. It is loaded first.
+Inside the Namespace/Modulename/etc directory, things are a little more complicated. The config.xml file contains module-level configuration, such as blocks, helpers, and events. It is loaded in every request. There can also be an adminhtml.xml file, which specifies configuration for the admin application. It is loaded after the config.xml in requests dealing with the admin store. There is an system.xml file, which configures the interface for the system config application. It is loaded when system config is being initialized. There are also several others: install.xml, wsi.xml, wsdi.xml, api2.xml, compilation.xml, api.xml, jstranslator.xml and widget.xml. They are used and loaded for various tasks in the system.
 
-######
+######What does "Magento loads modules" mean?
+
+Magento loads modules by getting the module declaration files out of app/etc/modules. 
+
+######In which order are Magento modules loaded?
+
+Magento modules are loaded in the following order:
+
+- Modules in the Mage_All.xml declaration file
+- Modules with the Mage_ prefix (i.e., namespace)
+- Then custom modules are loaded
+
+######Which core class loads modules?
+
+Mage_Core_Model_Config->_loadDeclaredModules
+
+######What are the consequences of one module depending on another module?
+
+If one module is dependent on another, the dependency module is loaded before the dependent module.
+
+######During the initialization of Magento, when are modules loaded in?
+
+Modules are loaded in after the basic configuration is initialized and the application parameters are registered.
+
+######Why is the load order important?
+
+Load order is important because configuration is set on a first-in basis. First time it is set, it is not overwritten by other configs.
+
+######What is the difference regarding module loading between Mage::run() and Mage::app()?
