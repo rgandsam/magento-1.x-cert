@@ -524,9 +524,12 @@ Appears to be no difference.
 ####Design and layout initialization
 
 Identify the steps in the request flow in which:
+
 – Design data is populated
-  - Design data is popluated in the `Mage_Core_Controller_Varien_Action->preDispatch` function/May also be in Mage_Core_Controller_Varien_Action->addActionLayoutHandles()/or
+  - Design data is popluated in the `Mage_Core_Controller_Varien_Action->addActionLayoutHandles()` function, which is called as part of the `Mage_Core_Controller_Varien_Action->loadLayout()` method.
+ 
 – Layout configuration files are parsed
-  - Layout configuration files are parsed in
+  - Layout configuration files are parsed in `Mage_Core_Model_Layout_Action->merge` function.
 – Layout is compiled
+  - Layout is compiled in the
 – Output is rendered
