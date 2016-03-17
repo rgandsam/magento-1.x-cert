@@ -518,3 +518,15 @@ Modules are loaded in after the basic configuration is initialized and the appli
 Load order is important because configuration is set on a first-in basis. First time it is set, it is not overwritten by other configs.
 
 ######What is the difference regarding module loading between Mage::run() and Mage::app()?
+
+Appears to be no difference.
+
+####Design and layout initialization
+
+Identify the steps in the request flow in which:
+– Design data is populated
+  - Design data is popluated in the `Mage_Core_Controller_Varien_Action->preDispatch` function/May also be in Mage_Core_Controller_Varien_Action->addActionLayoutHandles()/or
+– Layout configuration files are parsed
+  - Layout configuration files are parsed in
+– Layout is compiled
+– Output is rendered
