@@ -515,8 +515,7 @@ Modules are loaded in after the basic configuration is initialized and the appli
 
 ######Why is the load order important?
 
-Load order is important because configuration is set on a first-in basis. First time it is set, it is not overwritten by other configs.
-
+Load order is important because layouts, events can be dependent on one another.
 ######What is the difference regarding module loading between Mage::run() and Mage::app()?
 
 Appears to be no difference.
@@ -544,6 +543,8 @@ processed during a request?
 - The theme handle is loaded by default (`'THEME_'.$package->getArea().'_'.$package->getPackageName().'_'.$package->getTheme('layout')`)
 - The controllers action name is loaded by default
 - `Mage_Core_Controller_Varien_Action->getLayout()->getUpdate()->load([handles])`
+- Through the update node in a layout xml file. Nest them.
+- loadLayout(handle) will not load default handles, perhaps.
 
 ######Which classes are responsible for the layout being loaded?
 
