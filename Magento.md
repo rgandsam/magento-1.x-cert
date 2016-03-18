@@ -523,13 +523,52 @@ Appears to be no difference.
 
 ####Design and layout initialization
 
-Identify the steps in the request flow in which:
+######Identify the steps in the request flow in which:
 
 – Design data is populated
   - Design data is popluated in the `Mage_Core_Controller_Varien_Action->addActionLayoutHandles()` function, which is called as part of the `Mage_Core_Controller_Varien_Action->loadLayout()` method.
  
 – Layout configuration files are parsed
   - Layout configuration files are parsed in `Mage_Core_Model_Layout_Action->merge` function.
+  
 – Layout is compiled
-  - Layout is compiled in the
+  - Layout is compiled as part of the `Mage_Core_Controller_Varien_Action->generateLayoutXml()` function, which is called in `loadLayout()`.
 – Output is rendered
+  - Output is rendered with the `Mage_Core_Controller_Varien_Action->renderLayout()` method.
+  
+######Which ways exist to specify the layout update handles that will be
+processed during a request?
+
+- `Mage_Core_Controller_Varien_Action->getLayout->getUpdate->addHandle();`
+- The store handle is added by default (`'STORE_'.Mage::app()->getStore()->getCode()`)
+- The theme handle is loaded by default (`'THEME_'.$package->getArea().'_'.$package->getPackageName().'_'.$package->getTheme('layout')`)
+- The controllers action name is loaded by default
+- `Mage_Core_Controller_Varien_Action->getLayout()->getUpdate()->load([handles])`
+
+######Which classes are responsible for the layout being loaded?
+
+`Mage_Core_Model_Layout_Update` and `Mage_Core_Controller_Varien_Action`
+
+######How are layout xml directives processed?
+
+Layout xml directives are processed by loading all the layout update files into one big layout XML object, similar to how config is processed.
+
+######Which configuration adds a file containing layout xml updates to a module?
+
+In config.xml:
+```
+<area>
+ <layout>
+  <updates>
+   <unique_identifier>
+    <file>file.xml</file>
+   </unique_identifier>
+  </updates>
+ </layout>
+</area>
+```
+
+######Why is the load order of layout xml files important?
+
+One reason is that layout is loaded in a last-in, last-applied method.
+
