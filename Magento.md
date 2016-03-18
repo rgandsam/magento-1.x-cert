@@ -572,3 +572,32 @@ In config.xml:
 
 One reason is that layout is loaded in a last-in, last-applied method.
 
+####Flushing data (output)
+######Describe how and when Magento renders content to the browser
+
+In the `Mage_Core_Controller_Varien_Action->renderLayout` method, the appropriate blocks are output and their output is added to the response (`Mage_Core_Controller_Response_Http`). The controller action is then finished up, and the `Mage_Core_Controller_Response_Http->sendResponse` method is called. It sends the headers and the response body is directly echoed to the browser.
+
+######Describe how and when Magento flushes output variables using the Front controller
+
+Magento flushes output variables using the Front controller after ???
+
+######Which events are associated with sending output?
+
+- `controller_front_send_response_before`
+- `http_response_send_before`
+- `controller_front_send_response_after`
+
+######Which class is responsible for sending output?
+
+`Zend_Controller_Response_Abstract` - called in it's child class `Mage_Core_Controller_Response_Http`
+
+######What are possible issues when this output is not sent to the browser
+using the typical output mechanism, but is instead sent to the browser
+directly? 
+
+The correct headers may not be sent.
+
+######How are redirects handled?
+
+Redirects are made with the `Mage_Core_Controller_Varien_Action->_redirect($path)` method. The redirect headers are set and then, with `Mage_Core_Controller_Response_Http->sendResponse()` are echoed out.
+
