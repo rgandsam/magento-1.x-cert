@@ -602,3 +602,25 @@ The correct headers may not be sent.
 
 Redirects are made with the `Mage_Core_Controller_Varien_Action->_redirect($path)` method. The redirect headers are set and then, with `Mage_Core_Controller_Response_Http->sendResponse()` are echoed out.
 
+##3. Rendering
+####Themes in Magento
+######How you can use themes to customize core functionality?
+Themes should not be used to truly _customize_ core functionality; if you want to really customize core functionality you should emply a custom module. Themes can be used to customize layouts and templates, however. Whether or not those are "functionality" is debatable.
+
+######How can you implement different designs for different stores using Magento themes?
+
+These are set in the `design_change` table. You can set themes or packages on a store-by-store basis. 
+
+If you are looking for small changes from store to store, use different themes from the same package. If you are looking for major changes from store to store, use different packages.
+
+######In which two ways you can register custom theme?
+
+- Through the admin panel, in System -> Configuration -> Design. 
+- Date-based changes can be made in System -> Design.
+
+####Define and describe the use of design packages
+######What is the difference between package and theme?
+
+A package is a collection of themes, with at least one (called default) defined. A theme is a collection of related layout, translation, template, image, JavaScript, and CSS files.
+
+######
