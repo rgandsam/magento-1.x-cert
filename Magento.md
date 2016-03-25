@@ -636,3 +636,59 @@ There is also a newer theme inheritance mechanism that looks at the theme's etc/
 
 Relative paths are used for templates, and absolute paths are used for layout files. These are the default options, they could be changed...
 
+######How exactly can Magento define which physical file correspond to certain template/layout to use?
+
+Magento uses the `Mage_Core_Model_Design_Package->getFilename()` method to find all filenames. The `$params` are updated and then used to concatenate the correct file path. The `_type` key is particularly useful - here, Magento checks to determine which file type it is looking for, and then changes the base dir accordingly.
+
+######Which classes and methods need to be rewritten in order to add additional directories to the fallback list?
+
+- `Mage_Core_Model_Design_Fallback->_getFallbackScheme(), ->_getLegacyFallbackScheme(), ->getFallbackScheme`.
+
+##Blocks
+####Describe the programmatic structure of blocks
+######What are blocks used for in Magento?
+
+Magento blocks are chunks of user interface and related logic. They are the core of Magento's `view` system.
+
+######What is the parent block for all Magento blocks?
+
+`Mage_Core_Block_Abstract`
+
+######Which class does each block that uses a template extend?
+
+`Mage_Core_Block_Template`
+
+######In which way does a template block store information about its template file? Does it store an absolute or a relative path to the template?
+
+A template block stores information about its template in the `protected $_template` property. The path is stored relative to the template directory, and can be assigned or retrieved through the `getTemplate()` or `setTemplate()` methods, respectively.
+
+######What is the role of the Mage_Core_Block_Abstract class?
+
+All blocks in Magento inherit from the `Mage_Core_Block_Abstract` class, and it provides much of the base functionality to a block (i.e., access to the request, to layout, setting children/sibling blocks, getting output, caching, etc.).
+
+####Describe the relationship between templates and blocks
+######Can any block in Magento use a template file?
+
+No. Only blocks that inherit from `Mage_Core_Block_Template` can use template files.
+
+######How does the $this variable work inside the template file?
+
+The template file is executed inside the context of the block that uses it; therefore, the `$this` variable refers to the block.
+
+######Is it possible to render a template without a block in Magento?
+
+It is theoretically possible, as you could just `include` the template file. 
+
+######Is it possible to have a block without a template in Magento?
+
+Yes. `Mage_Core_Block_Text`, for example, does not have a template associated with it. It renders a text node.
+
+####Describe the stages in the lifecycle of a block:
+######Which class is responsible for creating an instance of the block?
+
+The `Mage_Core_Model_Layout` template is responsible for creating an instance of a block, through its `_getBlockInstance()` method.
+
+######Which class is responsible for figuring out which blocks should be created for certain pages?
+
+The `Mage_Core_Model_Layout_Update` class is responsible for figuring this out, through the `load()` method.
+
