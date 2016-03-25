@@ -629,6 +629,8 @@ Magento uses a system called fallbacks to look for missing theme/package files. 
 
 Files will be searched for in the currently specified theme. The fallback mechanism will look next in the store's default theme. Then the file will be searched for in the theme named default. Finally, the file is searched for in the base package and the base theme.
 
+There is also a newer theme inheritance mechanism that looks at the theme's etc/theme.xml file's `theme/parent` node for an theme to inherit from. It does not appear to be heavily used, and the only difference is that it will first search for the file based off of that, and then go to the base package.
+
 ####Describe the process of defining template file paths
 ######Which kind of paths (absolute or relative) does Magento use for templates and layout files?
 
