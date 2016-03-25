@@ -623,4 +623,14 @@ If you are looking for small changes from store to store, use different themes f
 
 A package is a collection of themes, with at least one (called default) defined. A theme is a collection of related layout, translation, template, image, JavaScript, and CSS files.
 
-######
+######What happens if the requested file is missed in your theme/package?
+
+Magento uses a system called fallbacks to look for missing theme/package files. Fallbacks can also provide a powerful mechanism for theme-inheritance.
+
+Files will be searched for in the currently specified theme. The fallback mechanism will look next in the store's default theme. Then the file will be searched for in the theme named default. Finally, the file is searched for in the base package and the base theme.
+
+####Describe the process of defining template file paths
+######Which kind of paths (absolute or relative) does Magento use for templates and layout files?
+
+Relative paths are used for templates, and absolute paths are used for layout files. These are the default options, they could be changed...
+
