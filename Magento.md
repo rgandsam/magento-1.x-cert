@@ -692,3 +692,6 @@ The `Mage_Core_Model_Layout` template is responsible for creating an instance of
 
 The `Mage_Core_Model_Layout_Update` class is responsible for figuring this out, through the `load()` method.
 
+######How is the tree of blocks typically rendered?
+
+The tree of blocks is typically rendered
