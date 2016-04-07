@@ -694,4 +694,27 @@ The `Mage_Core_Model_Layout_Update` class is responsible for figuring this out, 
 
 ######How is the tree of blocks typically rendered?
 
-The tree of blocks is typically rendered
+The tree of blocks is typically rendered with the 
+
+######Is it possible to create an instance of the block and render it on the page without using the Magento layout?
+
+Yes. You can instantiate the class and call its `toHtml` method.
+
+######Is it possible to create an instance of the block and add it to the current layout manually?
+
+A block can be instantiated manually, with `new BlockName();`. It can be added to the current layout manually with `$this->getLayout()->addBlock(BlockName, $name)`.
+
+######How are a block’s children rendered? Once you added a child to the block, can you expect it will be rendered automatically? 
+
+It depends on which block your block inherits from. `Mage_Core_Block_Template`, `Mage_Core_Block_Abstract`, `Mage_Core_Block_Text` do not render their children automatically - you need to manually call the child block with `$this->getChildHtml()`. On the other hand, `Mage_Core_Block_Text_List` automatically renders its children. 
+
+######What is a difference in rendering process for different types of blocks?
+
+The main difference in rendering processes for different types of blocks is in rendering children. Some blocks render children automatically, while others require the rendering of child blocks to be specified.
+
+######Describe events fired in blocks
+######How can block output be caught using an observer?
+
+`Mage::addObserver('core_block_abstract_to_html_after', function ($observer) { $observer['transport']->getHtml() });`
+
+######
