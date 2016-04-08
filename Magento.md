@@ -712,9 +712,45 @@ It depends on which block your block inherits from. `Mage_Core_Block_Template`, 
 
 The main difference in rendering processes for different types of blocks is in rendering children. Some blocks render children automatically, while others require the rendering of child blocks to be specified.
 
-######Describe events fired in blocks
+####Describe events fired in blocks
 ######How can block output be caught using an observer?
 
 `Mage::addObserver('core_block_abstract_to_html_after', function ($observer) { $observer['transport']->getHtml() });`
 
+######What events do Mage_Core_Block_Abstract and Mage_Core_Block_Template fire?
+
+- `Mage_Core_Block_Abstract`:
+- - `core_block_abstract_prepare_layout_before` - fired before the `_prepareLayout()` method is called
+- - `core_block_abstract_prepare_layout_after` - fired after the `_prepareLayout()` method
+- - `core_block_abstract_to_html_before` - fired before the `_toHtml()` method is called.
+- - `core_block_abstract_to_html_after` - fired after the `_toHtml()` method is called and useful for modifying output.
+- `Mage_Core_Block_Template`:
+- - same as above.
+
+####Identify different types of blocks:
+######What is the purpose of each of the following block types?
+- `Mage_Core_Block_Template` - this is a block that renders a template associated with itself.
+- `Mage_Core_Block_Text_List` - this block is useful when you need a block that automatically renders all of its children.
+- `Mage_Core_Block_Text` - This block is the generic magento block. It simply renders a text fragment (set with `setText()`.
+
+######Which block type renders its children automatically?
+
+`Mage_Core_Block_Text_List` renders its children automatically.
+
+######Which block type is usually used for a “content” block on Magento pages?
+
+`Mage_Page_Block_Html` appears to be used as the root block. `Mage_Core_Block_Text_List` is used as often as a content block.
+
+####Describe block instantiation
+######The block instance can be accessed with the `$this` variable. Other block instances can be accessed with the `Mage::app()->getLayout()->getBlock('block_name')`. A template should not access another block; that is better done in the block or controller.
+
+######How can block instances be accessed from the controller?
+
+`$this->getLayout()->getBlock('block_name')`
+
+######How can block instances be accessed inside install scripts or other model class instances? 
+
+`Mage::app()->getLayout()->getBlock('block_name')`
+
+####Explain different mechanisms for disabling block output
 ######
