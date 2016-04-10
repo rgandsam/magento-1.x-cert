@@ -694,7 +694,9 @@ The `Mage_Core_Model_Layout_Update` class is responsible for figuring this out, 
 
 ######How is the tree of blocks typically rendered?
 
-The tree of blocks is typically rendered with the 
+The tree of blocks is typically rendered with the following process:
+
+The `Mage_Core_Controller_Varien_Action::loadLayout()` method is called. It loads the appropriate layout handles, loads the layout xml updates from the files, and marks all ignored/without-adaquate-permissions blocks, then setting the appropriate xml tree. The `Mage_Core_Controller_Varien_Action::generateLayoutUpdates()` method is then called, which generates the block tree by looping through the layout XML tree and expanding it into a tree of block classes with their output method specified. (Initiating the various classes, setting/calling the actions, and modifying the references.)
 
 ######Is it possible to create an instance of the block and render it on the page without using the Magento layout?
 
@@ -753,4 +755,28 @@ The main difference in rendering processes for different types of blocks is in r
 `Mage::app()->getLayout()->getBlock('block_name')`
 
 ####Explain different mechanisms for disabling block output
-######
+######In which ways can block output be disabled in Magento?
+
+You can add the attribute `ignore='1'` to the block. You can `<remove name"nameOfTheBlock" />`.
+
+######Which method can be overridden to control block output?
+`_toHtml`
+
+####Describe how a typical block is rendered
+######Which class performs rendering of the template?
+
+`Mage_Core_Block_Template`
+
+######Which classes are responsible for figuring out the absolute path for including the template file?
+
+`Mage_Core_Block_Template` and `Mage_Core_Model_Design_Package`
+
+######In which method are templates rendered?
+
+`Mage_Core_Block_Template->fetchView()`
+
+######How can output buffering be enabled/disabled when templates are rendered?
+
+- `$this->getLayout()->setDirectOutput(false)` to enable output buffering
+- `$this->getLayout()->setDirectOutput(true)` to disable output buffering
+
