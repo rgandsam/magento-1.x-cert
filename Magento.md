@@ -780,3 +780,48 @@ You can add the attribute `ignore='1'` to the block. You can `<remove name"nameO
 - `$this->getLayout()->setDirectOutput(false)` to enable output buffering
 - `$this->getLayout()->setDirectOutput(true)` to disable output buffering
 
+####Design layout, XML schema, and CMS content directives
+#####Describe the elements of Magento's layout XML schema, including the major layout directives
+
+Magento uses an XML-based schema for layout. In addition to the ones below, there are two other directives: `<remove name="block_name" />` and `<reference name=""></reference>` which allows you to perform an action on a block specified in another place.
+
+######How are <update />, <block />, and <action /> used in Magento layout?
+
+- `<update />`: The update node updates layouts; it tells Magento: "Merge the specified `handle` and what I put inside the update node."
+- `<block />`: The block node is used to add a block to layout. It has several attributes:
+- - `type`: used to specify which block class to render
+- - `name`: this is the way to refer to the block in layout, in templates, and in code. Must be unique on the page
+- - `alias`: provides a shorthand way to refer to the block inside the parent block. Must be unique within the parent block
+- - `template`: the template for the block to render
+- `<action />`: provides a way to call a PHP method on a block. You specify the method (e.g., method="setText") and specify parameters with `<paramName>value</paramName>`
+
+######Which classes and methods determine which nodes from layout XML correspond to certain URLs?
+`Mage_Core_Controller_Varien_Action::loadLayout()` which in turn calls `Mage_Core_Controller_Varien_Action::addActionLayoutHandles()`.
+
+#####Register layout XML files
+######How can layout XML files be registered for the frontend and adminhtml areas?
+
+Frontend:
+
+```
+<?xml version="1.0">
+<config>
+ <adminhtml (or frontend)>
+  <layout>
+   <updates>
+    <updates>
+     <file>path/to/file.xml</file> <!--relative to the theme's layout directory-->
+    </updates>
+   </updates>
+  </layout>
+ </adminhtml>
+</config>
+```
+
+#####Create and add code to pages:
+######How can code be modified or added to Magento pages using the following methods, and in which circumstances are each the above methods more or less appropriate than others? 
+
+- Template customizations
+- Layout customizations
+- Overriding block classes
+- Registering observers on general block events
