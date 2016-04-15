@@ -854,4 +854,4 @@ To include javascript in a block, you need to ensure that the path is correct, i
 
 ######Which classes and files should be checked if a link to a custom JavaScript file isn’t being rendered on a page?
 
-`Mage_Page_Block_Html_Head::getCssJsHtml()`
+`Mage_Page_Block_Html_Head::getCssJsHtml()`, or anything related to layout to ensure that the nodes are being picked up.
