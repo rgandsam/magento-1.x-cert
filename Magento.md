@@ -821,7 +821,37 @@ Frontend:
 #####Create and add code to pages:
 ######How can code be modified or added to Magento pages using the following methods, and in which circumstances are each the above methods more or less appropriate than others? 
 
-- Template customizations
-- Layout customizations
-- Overriding block classes
-- Registering observers on general block events
+- Template customizations - you can add javascript, css, and pretty much any PHP you desire to a template. Adding complex PHP to a template is a code smell and the complex code moved to the block. Templates are appropriate to add presentation logic to.
+- Layout customizations - you can add blocks, set templates, and call block methods in layout. Layout is appropriate for setting up block parent/child structure and configuring blocks.
+- Overriding block classes - you can do pretty much anything, by overriding the class (`<block><identifier><rewrite><block_name_after_id>New_Block_Name</block_name_after_id>`. I'm of the opinion that says you shouldn't overwrite core code without a really good reason to do so - and should never do it, if at all possible, in a distributed extension. Let the store developer do that.
+- Registering observers on general block events - again, you can do almost anything by listening to `core_block_abstract_to_html_after` and calling `$observer->getBlock()` in your observer method. This is a good idea most of the time, to avoid rewrites and to avoid abusing layout/templates. Templates should handle presentation logic, however.
+
+#####Explain how variables can be passed to block instances via layout XML
+######How can variables be passed to the block using the following methods, and in which circumstances are each of the above methods more or less appropriate than others?
+- From layout xml file: can use this with `<action method="setWhatever"><param1>1</param1></action>`. This is appropriate for block configuration. Not apropriate for very complicated things, and really, limited in capability.
+- From controller - `$this->getLayout()->getBlock()->doWhatever($passValue)`. Often appropriate, if necessary, however, it is nice to avoid direct controller interaction with blocks, if possible.
+- From one block to another - `$this->getLayout()->getBlock()->doWhatever($passValue)`. Also a fine choice, but I would personally try to use layout first and then the controller before this.
+- From an arbitrary location (for example, install/upgrade scripts, models) - `Mage::getSingleton('core/layout')->getBlock()->doWhatever($passvalue);`. I would avoid this way if at all possible. Haven't really seen this done much.
+
+#####Describe various ways to add and customize JavaScript to specific request scopes
+######Which block is responsible for rendering JavaScript in Magento?
+
+`Mage_Page_Block_Html_Head`. You can use the `addItem($type, $fileName, $params, $if, $cond)` method.
+
+######Which modes of including JavaScript does Magento support?
+
+You can include it on the page or in the head. Magento doesn't support adding Javascript after the body out of the box.
+
+To include it, you can use layout action:
+
+```
+<reference name="head">
+ <action method="addJs"><name>Path/from.jsdirectory</name></action>
+</reference>
+```
+
+To include javascript in a block, you need to ensure that the path is correct, including the JS part of the directory. To help with this, you can use `$this->getJsUrl("normal path relative to js")`, `$this->baseUrl()/your/file.js`, or just specify the path yourself.
+
+######Which classes and files should be checked if a link to a custom JavaScript file isn’t being rendered on a page?
+
+`Mage_Page_Block_Html_Head::getCssJsHtml()`
