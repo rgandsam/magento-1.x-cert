@@ -855,3 +855,64 @@ To include javascript in a block, you need to ensure that the path is correct, i
 ######Which classes and files should be checked if a link to a custom JavaScript file isn’t being rendered on a page?
 
 `Mage_Page_Block_Html_Head::getCssJsHtml()`, or anything related to layout to ensure that the nodes are being picked up.
+
+#4. Working with Databases in Magento 
+###Models, resource models, and collections
+####Describe the basic concepts of models, resource models, and collections, and the relationship they have to one another
+
+Models are objects that represent data, often from the database. Resource models interact with the database and the model, reading from the database to the model and writing from the model to the database. Collections are collections of models of the same type.
+
+####Configure a database connection
+
+Database connections are configured in the app/etc/local.xml file:
+
+```
+<?xml version="1.0"?>
+ <config>
+  <global>
+   <resources>
+    <default_setup>
+     <connection>
+      <host><![CDATA[hostaddre.ss]]></host>
+      <username><![CDATA[user]]></username>
+      <password><![CDATA[ReAl1y-$ecur#-pa$sWo9D]]></password>
+      <dbname><![CDATA[database-name]]></dbname>
+      <initStatements><![CDATA[INIT STATEMENTS]]></initStatements>
+      <model><![CDATA[mysql4]]></model>
+      <type><![CDATA[pdo_mysql]]></type>
+      <pdoType><![CDATA[pdoType]]></pdoType>
+      <active>1</active>
+     </connection>
+    </default_setup>
+   </resources>
+  </global>
+ </config>
+ ```
+ 
+ The connections to use for `core_read`, `core_write`, `default_read`, and `default_write`, `default_setup` and `core_setup` are configured in the config.xml file:
+ 
+ ```
+ <config>
+  <global>
+   <resources>
+    <identifier>
+     <connection>
+      either <use>identifier</use> or details, as above
+ ```
+ ####Describe how Magento works with database tables
+ 
+ Magento interacts with database tables using resource models. In a resource model's `_construct` method, this `init` method is typically called, passing in the main_table identifier and the id field name as parameters. The main table identifier should correspond to an entity:
+ 
+ ```
+ <config>
+  <global>
+   <model>
+    <id_resource>
+     <entities>
+      <entityName>
+       <table>tableName</table>
+ ```
+ 
+ Magento uses these entity names to refer to tables. A tablename can be retreived with `Mage_Core_Model_Resource_Db_Abstract::getTable("entity_name"`.
+ 
+ ####
