@@ -915,4 +915,45 @@ Database connections are configured in the app/etc/local.xml file:
  
  Magento uses these entity names to refer to tables. A tablename can be retreived with `Mage_Core_Model_Resource_Db_Abstract::getTable("entity_name"`.
  
- ####
+ ####Describe the load-and-save process for a regular entity
+ 
+ When the load method is called on a model, the `_beforeLoad` method is called. Next, the resource model is retrieved, and its load method is called. The load method in the resource model executes a query looking for the first row to match the specified field (if none is specified, it looks for the id field). The data is then set to the model instance. The resource model `_afterLoad()` method is called, and then the models after load method is called. Finally the original data is set, and the model is returned.
+ 
+ When the save method is called, there is a check to ensure that the item has data changes. If it does, a transaction is begun on the database, and the `_beforeSave` method is called, followed by the resource model's `_save` method. This method serializes any specified fields, checks to make sure that the object is unique, and inserts/updates it into the database. Fields are then unserialized, and the `_afterSave` methods are called. The transaction is committed if this is all successful, and the transaction is rolled back if there is an error. The `_afterSaveCommit` method is then called, and `$this` is returned.
+ 
+ ####Describe group save operations
+ 
+ Calling the `save` method on a `Mage_Core_Model_Resource_Db_Collection_Abstract` collection model merely loops through the items and calls the save method on each of them. 
+ 
+ ####Describe the role of Zend_Db_Select in Magento
+ 
+ `Zend_Db_Select` is essentially Magento's alternative to a sql select statement. The various parts of the statement are stored in the `_parts` property. Calling the `Zend_Db_Select::__toString` method generates the parts into the SQL query string.
+ 
+ ####Describe the collection interface (filtering/sorting/grouping)
+ 
+ To filter: `Mage::getResourceModel('my/model_collection')->addFieldToFilter('field_name', 0|['eq' => 0])`
+ To sort: `Mage::getResourceModel('my/model_collection')->setOrder('field_name', 'ASC'|'DESC', )`
+ To group: `Mage::getResourceModel('my/model_collection')->getSelect()->group('column_to_group_by')`
+ 
+ TALK TO JOSEPH ABOUT THE GROUP BY!
+ 
+ ####Describe the hierarchy of database-related classes in Magento
+ 
+ Most resource models extend `Mage_Core_Model_Resource_Db_Abstract`, which extends `Mage_Core_Model_Resource_Abstract`.
+ 
+ Most collection models extend `Mage_Core_Model_Resource_Db_Collection_Abstract`, which extends `Varien_Data_Collection_Db`, which extends `Varien_Data_Collection`.
+ 
+ ####Describe the role and hierarchy of setup objects in Magento
+ 
+ All setup objects extend `Mage_Core_Model_Resource_Setup`. The role of a setup object is to create/modify the structure of the database.
+ 
+ ???ASK JOSEPH
+ 
+ ######Which methods exist to access the table of a resource model?
+ 
+ `Mage_Core_Model_Resource_Db_Abstract::getMainTable()`
+ `Mage_Core_Model_Resource_Db_Abstract::getTable($entityName)`
+ `Mage_Core_Model_Resource_Db_Abstract::getValueTable($entityName, $valueType)`
+ 
+ #######Which methods exist to create joins between tables on collections and on select instances?
+ 
