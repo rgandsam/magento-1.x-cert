@@ -945,7 +945,7 @@ Database connections are configured in the app/etc/local.xml file:
  
  ####Describe the role and hierarchy of setup objects in Magento
  
- All setup objects extend `Mage_Core_Model_Resource_Setup`. The role of a setup object is to create/modify the structure of the database.
+ All setup objects extend `Mage_Core_Model_Resource_Setup`. The role of a setup object is to create/modify the structure of the database. There is also a catalog and eav setup resource. The catalog setup resource is necessary when you want to write to the catalog_eav_attribute table.
  
  ???ASK JOSEPH
  
