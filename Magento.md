@@ -957,3 +957,109 @@ Database connections are configured in the app/etc/local.xml file:
  
  #######Which methods exist to create joins between tables on collections and on select instances?
  
+ Select instances:
+ - `Zend_Db_Select::join($tableName, $condition, $columnsToSelect)`
+ - `Zend_Db_Select::joinInner($tableName, $condition, $columnsToSelect)`
+ - `Zend_Db_Select::joinLeft($name, $condition, $columns)`
+ - `Zend_Db_Select::joinRight($name, $condition, $columns)`
+ - `Zend_Db_Select::joinFull($name, $condition, $columns)`
+ - `Zend_Db_Select::joinCross($name, $columns)`
+ - `Zend_Db_Select::joinNatural($name, $columns)`
+ 
+ Collections:
+ - `Mage_Core_Model_Resource_Db_Collection_Abstract::join($table, $condition, $columns)`
+
+ ######How does Magento support different RDBMSs?
+ 
+ Magento supports different RDBMSs through the use of database adapters. Database adapters implement the `Varien_Db_Adapter_Interface` interface, and can be specified in local.xml:
+ 
+ ```
+ <config>
+  <global>
+   <resources>
+    <db>
+        <table_prefix><![CDATA[]]></table_prefix>
+    </db>
+    <default_setup>
+        <connection>
+            <host><![CDATA[localhost]]></host>
+            <username><![CDATA[root]]></username>
+            <password><![CDATA[tYler1dESigner]]></password>
+            <dbname><![CDATA[pleasant_hill]]></dbname>
+            <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
+            <model><![CDATA[mysql4]]></model>
+            <type><![CDATA[pdo_mysql]]></type>Specify the type here
+            <pdoType><![CDATA[]]></pdoType> 
+            <active>1</active>
+        </connection>
+    </default_setup>
+   </resources>
+   <resource>
+    <connection>
+    DEFINE CONNECTION TYPES HERE
+     <types>
+      <pdo_mysql>
+       <adapter>Magento_Db_Adapter_Pdo_Mysql</adapter>
+       <class>Mage_Core_Model_Resource_Type_Db_Pdo_Mysql</class>
+       <compatibleMode>1</compatibleMode>
+      </pdo_mysql>
+     </types>
+    </connection>
+   </resource>
+  </global>
+ </config>
+ ```
+ 
+ ######How do table name lookups work, and what is the purpose of making table names configurable?
+ 
+ Table name lookups take place in the `Mage_Core_Model_Resource::getTableName($modelEntity)` method. The model entity string is split on the `/` character, and then the entity configuration is pulled from the configuration tree. 
+ 
+ Table names are configurable because this way provides a central repository and access point for table names. It is much more manageable in the instance that a table name needs to be changed in the future.
+ 
+ ######Which events are fired automatically during CRUD operations?
+ 
+ Before save:
+ - `Mage::dispatchEvent('model_save_before', array('object'=>$this));`
+ - `Mage::dispatchEvent($this->_eventPrefix.'_save_before', ['data_object' => $this, $this->_eventObject => $this]);`
+ 
+ After Save:
+ - `Mage::dispatchEvent('model_save_after', array('object'=>$this));`
+ - `Mage::dispatchEvent($this->_eventPrefix.'_save_after', ['data_object' => $this, $this->_eventObject => $this]);`
+ 
+ Before delete:
+ - `Mage::dispatchEvent('model_delete_before', array('object'=>$this));`
+ - `Mage::dispatchEvent($this->_eventPrefix.'_delete_before', ['data_object' => $this, $this->_eventObject => $this]);`
+ 
+ After delete:
+ - `Mage::dispatchEvent('model_delete_after', array('object'=>$this));`
+ - `Mage::dispatchEvent($this->_eventPrefix.'_delete_after', ['data_object' => $this, $this->_eventObject => $this]);`
+ 
+ After delete commit:
+ - `Mage::dispatchEvent('model_delete_commit_after', array('object'=>$this));`
+ - `Mage::dispatchEvent($this->_eventPrefix.'_delete_commit_after', ['data_object' => $this, $this->_eventObject => $this);`
+ 
+ Before load:
+ - `Mage::dispatchEvent('model_load_before', ['object' => $this, 'field' => field to load on, 'value' => value]);`
+ - `Mage::dispatchEvent($this->_eventPrefix.'_load_before', ['data_object' => $this, $this->_eventObject => $this, 'object' => $this, 'field' => field to load on, 'value' => value]);`
+ 
+ After load:
+ - `Mage::dispatchEvent('model_load_after', array('object'=>$this));`
+ - `Mage::dispatchEvent($this->_eventPrefix.'_load_after', ['data_object' => $this, $this->_eventObject => $this]);`
+
+ ######How does Magento figure out if a save() call needs to create an INSERT or an UPDATE query?
+ 
+ If the model instance has an id, Magento checks whether the id exists in the database. If it does, Magento uses an update query. Otherwise, it uses an insert query.
+ 
+ ######How many ways exist to specify filters on a flat table collection?
+ 
+ 3:
+ - `Varien_Data_Collection_Db::addFieldToFilter('field', '[condition]')`
+ - `Varien_Data_Collection::addFilter('field', 'value', 'type')`
+ - `Mage_Core_Model_Resource_Db_Collection_Abstract::getSelect()->where(['field' => 'value'])`
+ 
+ #######Which methods exist to influence the ordering of the result set for flat table collections? How do the methods differ?
+
+ - `Varien_Data_Collection_Db::setOrder||addOrder($field, 'DESC'|'ASC')` - adds order to the end, giving it last priority
+ - `Varien_Data_Collection_Db::unshiftOrder($field, 'DESC'|'ASC')` - adds order to the beginning, giving it first priority
+ 
+ ######Why and how does Magento differentiate between setup, read, and write database resources?
