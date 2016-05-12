@@ -1063,3 +1063,29 @@ Database connections are configured in the app/etc/local.xml file:
  - `Varien_Data_Collection_Db::unshiftOrder($field, 'DESC'|'ASC')` - adds order to the beginning, giving it first priority
  
  ######Why and how does Magento differentiate between setup, read, and write database resources?
+
+This is because Magento supports master/slave database configuration setups. The different database resources can be configured in app/etc/local.xml.
+
+####Install/upgrade scripts
+######Describe the install/upgrade workflow
+
+The install/upgrade workflow is rather simple. The scripts are typically titled with `mysql4-install-version1-version2` or `mysql4-upgrade-version1-version2`. You also need to update the version specified in config.xml, and then your script should run.
+
+######Write install and upgrade scripts using set-up resources 
+
+There are a number of set-up resources that are typically used: `Mage_Eav_Model_Entity_Setup` and `Mage_Core_Model_Resource_Setup`. An install script is included into one of these classes, and typically does the following four things:
+
+1. Aliases $this to $installer
+2. Calls the $installer->startSetup() method
+3. Runs installation code
+4. Calls the $installer->endSetup() method
+
+######Identify how to use the DDL class in setup scripts
+
+The DDL class can be used to provide database-agnostic setup scripts. You use it by calling `$installer->getConnection()->newTable()`
+
+######Under which circumstances are setup scripts executed?
+
+Setup scripts are executed when the version specified in config.xml is higher than the version specified in `core_resource`.
+
+######
