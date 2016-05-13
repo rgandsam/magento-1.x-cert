@@ -1088,4 +1088,39 @@ The DDL class can be used to provide database-agnostic setup scripts. You use it
 
 Setup scripts are executed when the version specified in config.xml is higher than the version specified in `core_resource`.
 
-######
+######What is the difference between the different classes used to execute setup scripts?
+
+The main difference is that some of them have additional or different functionality defined on top of the base class.
+
+######Which is the base setup class for flat table entities, and which one the base for EAV entities?
+
+The base setup class for flat table entities is `Mage_Core_Model_Resource_Setup` and the base setup class for EAV entities is `Mage_Eav_Model_Entity_Setup`.
+
+######Which methods are generally available in setup scripts to manipulate database tables and indexes?
+
+Here are a number of generally available ones for setup scripts dealing with flat tables:
+
+- `getTable($tableName)` and `getTable($tableName, $realTableName)`
+- `getTableRow($table, $idField, $id)`
+- `deleteTableRow($table, $idField, $id)`
+- `updateTableRow($table, $idField, $id, $field, $value)`
+- `tableExists($table)`
+- `run($sql)`
+- `getIdxName($tableName, $fields, $indexType = '')`
+- `getFkName($priTableName, $priColumnName, $refTableName, $refColumnName)`
+
+######What is the difference between addAttribute() and updateAttribute() in EAV setup scripts?
+
+addAttribute both updates existing attributes and creates new ones, while updateAttribute only updates existing attributes.
+
+######How can you implement a rollback in Magento?
+
+Magento does not currently support rollback scripts; therefore, you can write one manually using existing Magento functionality: `Mage_Core_Model_Resource_Setup::deleteTableRow()`, `Mage_Core_Model_Resource_Setup::removeAttribute()`. You will have to run it manually, or increment your version numbers.
+
+#5. Entity-Attribute-Value (EAV) Model
+##EAV model concepts
+####Define basic EAV concepts and class hierarchy
+
+The basic EAV concept is storing data (values) for entities (models) in multiple tables, defined as a specific attribute. EAV models, like their flat-table counterparts, inherit from `Mage_Core_Model_Abstract`. The difference is in the resource model: while flat-table models inherit from `Mage_Core_Model_Resource_Db_Abstract`, EAV models inherit from the `Mage_Eav_Model_Entity_Abstract` class.
+
+####Describe the database schema for EAV entities
