@@ -1143,16 +1143,32 @@ First, the base row (entity) is loaded. Then the various attributes associated w
 Save:
 The attributes associated with the entity are loaded, then the attribute values are processed. The base row is saved, and the attribute values are saved into their tables. The regular load process just inserts the data, and doesn't have to deal with the multiple tables.
 
+######Which classes in Mage_Eav are used as resource models and which are used as regular models?
+
+All the `Mage_Eav_Model_Resource_` classes are resource models, as well as the `Mage_Eav_Model_Entity_Abstract` and `Mage_Eav_Model_Entity_Setup` classes. The other `Mage_Eav_`-prefixed models are regular models.
+
+######How do flat and EAV resource models differ?
+
+Flat and EAV resource models differ in two ways: default functionality and inheritance chains. Flat resource models typically inherit from `Mage_Core_Model_Resource_Db_Abstract`, while EAV resource models typically inherit from `Mage_Eav_Model_Entity_Abstract`. EAV resource models also have functionality that allows them to save attributes, as well as their flat rows.
+
 ######What are the advantages and disadvantages of EAV over flat table resource models?
 
 The main advantage of EAV over flat table resource models is it's flexibility: you can add nearly any piece of data you want to an entity without changing your database structure.
 
 The main disadvantage of using EAV over flat table resource models is that EAV is slow, because of the added SQL necessary to retrieve data from various tables.
 
-######How do load and save processes for EAV entities differ from those for flat table entities? What parts are identical?
-
-See the above answer. The identical part is that they both have to load/save from a base row; EAV also must load/save attributes.
-
 ######Which entities in a native Magento installation use EAV resource models and why?
 
 `customer/customer`, `customer/address`, `catalog/category`, `catalog/product`, `sales/order`, `sales/order_invoice`, `sales/order_creditmemo`, `sales/order_shipment`, and `eav/attribute_option` all use EAV resource models, for their flexibility.
+
+######How are store and website scope attribute values implemented in the Magento EAV system?
+
+The store code is stored in the `store_id` column in the database tables, and therefore values are associated wiht a specific store.
+
+######How does the model distinguish between insert and update operations?
+
+
+
+######How do load and save processes for EAV entities differ from those for flat table entities? What parts are identical?
+
+See the above answer. The identical part is that they both have to load/save from a base row; EAV also must load/save attributes.
