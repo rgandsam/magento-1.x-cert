@@ -1133,6 +1133,8 @@ EAV entities typically have an `entity` table, such as `catalog_product_entity`.
 
 This is different from a typical flat table model, which stores all data into one table.
 
+Bottom line: EAV is row-based, while flat models are column based.
+
 ####Describe the EAV load-and-save process and its differences from the regular load-and-save process
 
 Load:
@@ -1151,4 +1153,6 @@ The main disadvantage of using EAV over flat table resource models is that EAV i
 
 See the above answer. The identical part is that they both have to load/save from a base row; EAV also must load/save attributes.
 
-######
+######Which entities in a native Magento installation use EAV resource models and why?
+
+`customer/customer`, `customer/address`, `catalog/category`, `catalog/product`, `sales/order`, `sales/order_invoice`, `sales/order_creditmemo`, `sales/order_shipment`, and `eav/attribute_option` all use EAV resource models, for their flexibility.
