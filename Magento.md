@@ -1124,3 +1124,31 @@ Magento does not currently support rollback scripts; therefore, you can write on
 The basic EAV concept is storing data (values) for entities (models) in multiple tables, defined as a specific attribute. EAV models, like their flat-table counterparts, inherit from `Mage_Core_Model_Abstract`. The difference is in the resource model: while flat-table models inherit from `Mage_Core_Model_Resource_Db_Abstract`, EAV models inherit from the `Mage_Eav_Model_Entity_Abstract` class.
 
 ####Describe the database schema for EAV entities
+
+EAV entity types are defined in the `eav_entity_type` table, and then mapped to entities. Attributes are defined in the `eav_attribute` table, and various data related to attributes is scattered through the various `eav_attribute_` tables.
+
+####Describe the EAV entity structure and its difference from the standard core resource model
+
+EAV entities typically have an `entity` table, such as `catalog_product_entity`. While some data is usually stored alongside the entity in the `entity` table, the bulk of the data is stored in type-specific tables, such as `catalog_product_entity_decimal`, along with an `entity_id` that maps the data back to its parent entity and an `attribute_id` that matches the value to an attribute.
+
+This is different from a typical flat table model, which stores all data into one table.
+
+####Describe the EAV load-and-save process and its differences from the regular load-and-save process
+
+Load:
+First, the base row (entity) is loaded. Then the various attributes associated with the entity are loaded, and finally their values are retrieved from their respective database tables. This is different from the regular load process where all the data from a model is retrieved with one SQL call.
+
+Save:
+The attributes associated with the entity are loaded, then the attribute values are processed. The base row is saved, and the attribute values are saved into their tables. The regular load process just inserts the data, and doesn't have to deal with the multiple tables.
+
+######What are the advantages and disadvantages of EAV over flat table resource models?
+
+The main advantage of EAV over flat table resource models is it's flexibility: you can add nearly any piece of data you want to an entity without changing your database structure.
+
+The main disadvantage of using EAV over flat table resource models is that EAV is slow, because of the added SQL necessary to retrieve data from various tables.
+
+######How do load and save processes for EAV entities differ from those for flat table entities? What parts are identical?
+
+See the above answer. The identical part is that they both have to load/save from a base row; EAV also must load/save attributes.
+
+######
