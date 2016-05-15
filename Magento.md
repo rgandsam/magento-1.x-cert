@@ -1167,7 +1167,7 @@ The store code is stored in the `store_id` column in the database tables, and th
 
 ######How does the model distinguish between insert and update operations?
 
-
+For the base rows, it checks to see if the `entity_id` exists. For the attributes, it seperates the different attributes into three categories: delete, update, and insert. It distinguishes between update and insert opperations: update: the attribute value is not empty and if the value is different from the current value, then it is an update. If the attribute was not originally defined, then it is an insert.
 
 ######How do load and save processes for EAV entities differ from those for flat table entities? What parts are identical?
 
