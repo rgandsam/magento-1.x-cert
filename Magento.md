@@ -1172,3 +1172,45 @@ For the base rows, it checks to see if the `entity_id` exists. For the attribute
 ######How do load and save processes for EAV entities differ from those for flat table entities? What parts are identical?
 
 See the above answer. The identical part is that they both have to load/save from a base row; EAV also must load/save attributes.
+
+##Attributes management
+####Identify the purpose of attribute frontend, source, and backend models
+
+- Frontend: `Mage_Eav_Model_Entity_Attribute_Frontend_Abstract` - used for displaying the attribute and generating HTML for it
+- Backend: `Mage_Eav_Model_Entity_Attribute_Backend_Abstract` - used for validating, converting and saving the attribute data
+- Attribute: `Mage_Eav_Model_Entity_Attribute_Abstract` - used to store the attribute data
+- Source: `Mage_Eav_Model_Entity_Attribute_Source_Abstract` - used to retrieve attribute options and models
+
+####Describe how to implement the interface of attribute frontend, source, and backend models:
+######How do attribute models, attribute source models, attribute backend models and attribute frontend models relate to each other?
+
+See the above answer: attribute models house the data, attribute backend models save the data, attribute source models specify the attribute options, and attribute frontend models display the data. 
+
+######Which methods have to be implemented in a custom source model (or frontend model or backend model)?
+
+In a custom source model, you have to implement the `getAllOptions()` method, which returns an array of option values and labels.
+
+In a custom backend model, you don't have to implement any specific methods, so long as you inherit `Mage_Eav_Model_Entity_Attribute_Backend_Abstract`. However, you may want to override/extend some of the existing methods, such as `validate()` or `before/afterSave()`.
+
+In a custom frontend model, you don't have to implement any specific methods.
+
+######Can adminhtml system configuration source models also be used for EAV attributes?
+
+Not on their own, however, you could wrap the class with an adapter that implements the `getAllOptions()` method by calling the `toArray()` method.
+
+######What is the default frontend model (and source and backend model) for EAV attributes?
+
+Frontend: `Mage_Eav_Entity_Attribute_Frontend_Default`
+Backend: `Mage_Eav_Entity_Attribute_Backend_Default`
+Source: `Mage_Eav_Model_Entity_Attribute_Source_Config`
+
+######Does every attribute use a source model?
+
+No. Not every attribute uses a source model, but only the ones with a `select` or `multiselect` frontend input, or where the `source_model` varien data key is defined.
+
+######Which classes and methods are related to updating the EAV attribute values in the flat catalog tables? What factors allow for attributes to be added to flat catalog tables?
+
+The classes and methods related to updating the EAV attribute values in the flat catalog tables are:
+
+`Mage_Eav_Model_Entity_Attribute_Source_Abstract::getFlatIndexes()`, `::getFlatColums()`, and `::getFlatUpdateSelect()`.
+
