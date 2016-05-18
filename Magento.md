@@ -1212,5 +1212,7 @@ No. Not every attribute uses a source model, but only the ones with a `select` o
 
 The classes and methods related to updating the EAV attribute values in the flat catalog tables are:
 
-`Mage_Eav_Model_Entity_Attribute_Source_Abstract::getFlatIndexes()`, `::getFlatColums()`, and `::getFlatUpdateSelect()`.
+`Mage_Catalog_Model_Resource_Product_Flat_Indexer`, `::updateAttributes($attribute, $storeId)`, `::updateEavAttributes($storeId())`, and `Mage_Catalog_Model_Resource_Category_Flat::synchronize()`. 
+
+The attribute's `used_in_product_listing` value needs to be true.
 
