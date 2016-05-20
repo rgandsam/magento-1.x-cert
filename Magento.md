@@ -1216,3 +1216,59 @@ The classes and methods related to updating the EAV attribute values in the flat
 
 The attribute's `used_in_product_listing` value needs to be true.
 
+######How are store-scoped entity attribute values stored when catalog flat storage is enabled for that entity type?
+
+The store id is appended to the end of the table name, so for products: `catalog_product_flat_1`. For categories: `catalog_category_flat_store_1`.
+
+######Which frontend, source, and backend models are available in a stock Magento installation?
+
+Source models:
+
+- `Mage_Eav_Model_Entity_Attribute_Source_Boolean` - a basic boolean source model (yes/no)
+- `Mage_Eav_Model_Entity_Attribute_Source_Config` - a source model with options pulled fro a config path. Must be extended to use.
+- `Mage_Eav_Model_Entity_Attribute_Source_Store` - source model for store ids
+- `Mage_Eav_Model_Entity_Attribute_Source_Table` - a DB-based source model, pulling specified source options from the `eav_attribute_option` table, and value options from the `eav_attribute_option_value` table.
+
+Frontend models:
+
+- `Mage_Eav_Model_Entity_Attribute_Frontend_Datetime` - a date frontend model
+- `Mage_Eav_Model_Entity_Attribute_Fronted_Default` - a simple extension of the abstract model
+
+Backend models: 
+
+- `Mage_Eav_Model_Entity_Attribute_Backend_Array` - a backend model for attributes with multiple values
+- `Mage_Eav_Model_Entity_Attribute_Backend_Datetime` - a backend model for date values
+- `Mage_Eav_Model_Entity_Attribute_Backend_Default` - a simple extension of the abstract model 
+- `Mage_Eav_Model_Entity_Attribute_Backend_Increment` - simple increment support for the id
+- `Mage_Eav_Model_Entity_Attribute_Backend_Serialized` - support for serialized data
+- `Mage_Eav_Model_Entity_Attribute_Backend_Store` - for saving an associated store id with an attribute
+- `Mage_Eav_Model_Entity_Attribute_Backend_Time_Created` - support for a `created_at` timestamp
+- `Mage_Eav_Model_Entity_Attribute_Backend_Time_Updated` - support for a `updated_at` timestamp
+
+######How do multi-lingual options for attributes work in Magento?
+
+You can have attributes on a store-by-store basis, so one for each store with a different language. TALK TO JOSEPH!
+
+######How do you get a list of all options for an attribute for a specified store view in addition to the admin scope?
+
+`Mage_Eav_Model_Resource_Entity_Attribute_Option_Collection::setStoreFilter($storeId, true)`
+
+####Describe how to create and customize attributes
+
+Attributes can be created with `Mage_Eav_Model_Entity_Setup::addAttribute($entityTypeId, $code, array(attributes))`. They can be customized with `addAttribute()` or `udpateAttribute($entityTypeId, $id, $field, $value)`.
+
+######Which setup methods are available to work with EAV entities?
+
+`Mage_Eav_Model_Entity_Setup::addENtityType($code, $params)`, `::updateEntityType($code, $field, $value)`, `::removeEntityType($id)`, `::getEntityTypeId($entityTypeId)`, `::getEntityType($id, $field)`
+
+######How can an EAV setup class be instantiated in a setup script if not specified in the XML <class> configuration for a setup resource?
+
+By defining `$this` or `$installer` to `new Mage_Eav_Model_Entity_Setup()`. ASK JOSEPH!!!
+
+######What is the difference between addAttribute() and updateAttribute()?
+
+`addAttribute` both updates existing attributes and creates new ones, while `updateAttribute` only updates existing attributes.
+
+######What are the advantages of using a custom setup class for manipulating EAV attributes in a custom module?
+
+The advantages are greater flexibility and more specific queries, more vaildation rules, and the ability to use your own table. Also, you can have your own custom setup function for a specific attribute type.
