@@ -1272,3 +1272,18 @@ By defining `$this` or `$installer` to `new Mage_Eav_Model_Entity_Setup()`. ASK 
 ######What are the advantages of using a custom setup class for manipulating EAV attributes in a custom module?
 
 The advantages are greater flexibility and more specific queries, more vaildation rules, and the ability to use your own table. Also, you can have your own custom setup function for a specific attribute type.
+
+#6. Adminhtml
+##Common structure/architecture
+####Describe the similarities and differences between adminhtml and frontend interface and routing
+######Which areas in configuration are only loaded for the admin area?
+
+The `adminhtml`, `menu`, `acl` and `admin` nodes are only loaded for the admin area.
+
+######What is the difference between admin and frontend controllers?
+
+Their inheritance chains are different, because admin controllers extend `Mage_Adminhtml_Controller_Action`, while frontend controllers extend `Mage_Core_Controller_Varien_Action`.
+
+######When does Magento figure out which area to use on the current page?
+
+This is determined in the router's `match()` method, when the frontname is found to be `admin`.
