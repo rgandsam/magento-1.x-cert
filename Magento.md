@@ -128,9 +128,9 @@ The Event/Observer pattern is utilized to a tremendous extent in Magento. You ca
 </area>
 ```
 
-######Identify the function and proper use of automatically available events, including *_load_after, etc.
+######Identify the function and proper use of automatically available events, including `*_load_after`, etc.
 
-These events can be used to "hook" into different actions in the system and modify results without editing core code. The *_load_after event is fired every time a model is loaded, and it is prefixed with the `_eventPrefix` property of the model. This can be set in each model. It provides a way to modify data easily.
+These events can be used to "hook" into different actions in the system and modify results without editing core code. The `*_load_after` event is fired every time a model is loaded, and it is prefixed with the `_eventPrefix` property of the model. This can be set in each model. It provides a way to modify data easily.
 
 #######Setup a cron job
 
@@ -156,10 +156,9 @@ Cron jobs can be set up in Magento inside a modules config.xml file.
 
 ####XML-DOM
 
-######How does the framework discover active modules and their
-configuration?
+######How does the framework discover active modules and their configuration?
 
-*See `Mage_Core_Model_Config`.
+* See `Mage_Core_Model_Config`.
 
 Active modules and their configuration are discovered by going into the app/etc/modules/ directory and grabbing every XML file in the directory. The files are then looped through and checked to ensure that the modules are active. The framework then loads the module config files from each modules etc/ directory (Mage_Core_Model_Config->loadModulesConfiguration()) and adds them to the mammoth config object.
 
@@ -170,15 +169,13 @@ configuration values and areas?
 
 ######How are per-store configuration values established in the XML DOM?
 
-Per-store configuration values are read from the database (takes place in Mage_Core_Model_Config->_loadDb) or from the module config files (in the Mage_Core_Model_Config->loadModulesConfiguration function). They are stored in Mage_Core_Model_Config->_xml->stores property, and can be accessed with Mage::getConfig()->getNode() or Mage::getStoreConfig().
+Per-store configuration values are read from the database (takes place in `Mage_Core_Model_Config->_loadDb`) or from the module config files (in the Mage_Core_Model_Config->loadModulesConfiguration function). They are stored in `Mage_Core_Model_Config->_xml->stores` property, and can be accessed with `Mage::getConfig()->getNode()` or `Mage::getStoreConfig()`.
 
-######By what process do the factory methods and autoloader enable class
-instantiation?
+######By what process do the factory methods and autoloader enable class instantiation?
 
-The factory methods, depending on which is being called, either look in the registry for an existing object and then instantiate if not found (singleton and helper), or just instantiate a new object (model and block), by translating the name into a string like this: Namespace_Modulename_Model_Class. The framework first looks for the class by checking if it's path is registered in the config tree. The autoloader then replaces the underscores with directory separators and includes the file path. If the class is not found, an error is thrown. The factory method then instantiates the class, and returns it.
+The factory methods, depending on which is being called, either look in the registry for an existing object and then instantiate if not found (singleton and helper), or just instantiate a new object (model and block), by translating the name into a string like this: `Namespace_Modulename_Model_Class`. The framework first looks for the class by checking if it's path is registered in the config tree. The autoloader then replaces the underscores with directory separators and includes the file path. If the class is not found, an error is thrown. The factory method then instantiates the class, and returns it.
 
-######Which class types have configured prefixes, and how does this relate to
-class overrides?
+######Which class types have configured prefixes, and how does this relate to class overrides?
 
 Models, Resource Models, Helpers, and Blocks all have configured prefixes. Classes can be overridden in the module’s etc/config.xml file. Inside the models, helpers, or blocks node add a module identifier node, followed by the rewrite node. Inside the rewrite node, add a node for the class name that you want to override. It’s value should be set to your overriding class name.
 
@@ -214,7 +211,7 @@ Internationalization is fairly easy in Magento. You will have a unique store vie
 
 #######Describe the use of Magento translate classes and translate files
 
-Magento translate files can be obtained from Magento Connect and are placed in the app/locale folder. They are comma-separated strings with english strings and foreign language equivalents. The Mage_Core_Model_Translate class loads the translation files from the translate/modules node in the config tree, the theme translations in the theme's locale/[languagecode]_[countrycode]/translate.csv and the translation rows from the core_translate table. The data is then pulled out in pairs and stored in Mage_Core_Model_Translate's _data property. When a helper/block's `__()` method is called, the class looks for the string in the config tree. If found, it returns the foreign-language equivalent.
+Magento translate files can be obtained from Magento Connect and are placed in the app/locale folder. They are comma-separated strings with english strings and foreign language equivalents. The Mage_Core_Model_Translate class loads the translation files from the translate/modules node in the config tree, the theme translations in the theme's `locale/[languagecode]_[countrycode]/translate.csv` and the translation rows from the core_translate table. The data is then pulled out in pairs and stored in Mage_Core_Model_Translate's `_data` property. When a helper/block's `__()` method is called, the class looks for the string in the config tree. If found, it returns the foreign-language equivalent.
 
 ######Describe the advantages and disadvantages of using subdomains and subdirectories
 in internationalization
@@ -237,8 +234,8 @@ string?
 There are three options:
 
 1. The core_translate table in the database
-2. The theme's translations files (app/design/[area]/[package]/[theme]/locale/[languagecode][countrycode]/translate.csv)
-3. Module-level translation files (registered in the config.xml file and stored in app/locale/[languagecode]_[countrycode]/[namespace]_[module].csv)
+2. The theme's translations files (`app/design/[area]/[package]/[theme]/locale/[languagecode][countrycode]/translate.csv`)
+3. Module-level translation files (registered in the config.xml file and stored in `app/locale/[languagecode]_[countrycode]/[namespace]_[module].csv`)
 
 You register module-level translation files in config.xml like this:
 
@@ -292,7 +289,7 @@ The include path is set up in the beginning of the Mage.php file, before the Mag
 ######How and when does Magento load the base configuration, the module
 configuration, and the database configuration?
 
-Magento loads the base configuration as the first step in the Mage_Core_Model_App->run() method by grabbing and parsing all the XML files in the app/etc folder. The module configuration is loaded next, with the _initModules method. It (and it's called functions) grab and parse all the module declaration *.xml files in app/etc/modules. It then loads the config.xml files from the etc directories. The database configuration is then loaded with the config->loadDb method. It loads the configuration values stored in the DB into the XML tree.
+Magento loads the base configuration as the first step in the Mage_Core_Model_App->run() method by grabbing and parsing all the XML files in the app/etc folder. The module configuration is loaded next, with the `_initModules` method. It (and it's called functions) grab and parse all the module declaration `*.xml` files in `app/etc/modules`. It then loads the config.xml files from the etc directories. The database configuration is then loaded with the config->loadDb method. It loads the configuration values stored in the DB into the XML tree.
 
 ######How and when are the two main types of setup script executed?
 
@@ -303,17 +300,17 @@ Data scripts are run after the local configuration is loaded and the store and r
 ###### When does Magento decide which store view to use, and when is the
 current locale set?
 
-The store view is decided in the Mage_Core_Model_App->_initCurrentStore() function. The locale is set when system configuration is loaded in.
+The store view is decided in the `Mage_Core_Model_App->_initCurrentStore()` function. The locale is set when system configuration is loaded in.
 
 ######Which ways exist in Magento to specify the current store view?
 
-1. Environment variables ($_SERVER['MAGE_RUN_CODE'], set in index.php)
-2. Cookies (the store cookie and the Mage_Core_Model_App->_checkCookieStore() function)
-3. The HTTP GET parameter `__store` (Mage_Core_Model_App->_checkGetStore())
+1. Environment variables (`$_SERVER['MAGE_RUN_CODE']`, set in index.php)
+2. Cookies (the store cookie and the `Mage_Core_Model_App->_checkCookieStore()` function)
+3. The HTTP GET parameter `__store` (`Mage_Core_Model_App->_checkGetStore()`)
 
 ######When are the request and response objects initialized?
 
-The request object is initialized in the Mage_Core_Model_App->_initRequest() function, through the Mage_Core_Model_App->getRequest() function, which instantiates the object if it does not exist yet, and returns it.
+The request object is initialized in the `Mage_Core_Model_App->_initRequest()` function, through the `Mage_Core_Model_App->getRequest()` function, which instantiates the object if it does not exist yet, and returns it.
 
 The response object is initialized in the Mage_Core_Model_App->getResponse() function, like the getRequest function. It is initially called in the Mage_Core_Controller_Varien_Front->getResponse function, as a parameter of instantiating the controller class.
 
@@ -334,7 +331,7 @@ Here are some possible uses for events fired in the front controller:
 ######Which ways exist in Magento to add router classes?
 
 1. In config.xml
-2. 
+2.
 ```
 <config>
   <default>
@@ -395,9 +392,9 @@ The front name is then followed by the prefix of the controller you are trying t
 
 The Magento URL rewrite process allows Magento's API-style urls to become SEO-friendly URLs. The rewrite process involves these steps:
 
-- The `$this->_getRequestRewriteController()->rewrite` method is called in Mage_Core_Controller_Varien_Front.
-- The _getRequestRewriteController method instantiates the Mage_Core_Model_Url_Rewrite_Request class.
-- The Mage_Core_Model_Url_Rewrite_Request->rewrite() method is called. It applies the rewrites from the database and from the config.
+- The `$this->_getRequestRewriteController()->rewrite` method is called in `Mage_Core_Controller_Varien_Front`.
+- The `_getRequestRewriteController` method instantiates the `Mage_Core_Model_Url_Rewrite_Request` class.
+- The `Mage_Core_Model_Url_Rewrite_Request->rewrite()` method is called. It applies the rewrites from the database and from the config.
 
 ######What is the purpose of each of the fields in the core_url_rewrite
 table?
@@ -419,7 +416,7 @@ products?
 
 ######How and where does Magento find a matching record for the current request?
 
-The request is matched to the rewrite in Mage_Core_Model_Url_Rewrite_Request->_rewriteDb. This method calls the Mage_Core_Model_Url_Rewrite->loadByRequestPath method which looks for the request_path to match. If they match, the system assigns the rewritten url to the _aliases property in the Zend_Controller_Request_Http object.
+The request is matched to the rewrite in `Mage_Core_Model_Url_Rewrite_Request->_rewriteDb`. This method calls the `Mage_Core_Model_Url_Rewrite->loadByRequestPath` method which looks for the `request_path` to match. If they match, the system assigns the rewritten url to the `_aliases` property in the `Zend_Controller_Request_Http` object.
 
 ####Request routing
 
@@ -440,7 +437,7 @@ There are five routers in a native Magento implementation: the admin router (Mag
 
 ######How does the standard router map a request to a controller class?
 
-By getting the front name and controller name from the request, and then getting the module associated with that front name. The controller name is then retrieved from the request, and the system merges it all into a path. 
+By getting the front name and controller name from the request, and then getting the module associated with that front name. The controller name is then retrieved from the request, and the system merges it all into a path.
 
 ######How does the standard router build the filesystem path to a file that might contain a matching action controller?
 
@@ -485,13 +482,13 @@ A module dependency causes the module's configuration to be loaded before the de
 
 ######Describe different types of configuration files and the priorities of their loading
 
-There are two main configuration file types in Magento: the `Namespace_Modulename.xml` configuration files in the app/etc/modules directory, and the configuration files in the Namespace/Modulename/etc/ directory. The `Namespace_Modulename.xml` file registers the module with some rudimentary config (codePool, dependencies). 
+There are two main configuration file types in Magento: the `Namespace_Modulename.xml` configuration files in the app/etc/modules directory, and the configuration files in the Namespace/Modulename/etc/ directory. The `Namespace_Modulename.xml` file registers the module with some rudimentary config (codePool, dependencies).
 
 Inside the Namespace/Modulename/etc directory, things are a little more complicated. The config.xml file contains module-level configuration, such as blocks, helpers, and events. It is loaded in every request. There can also be an adminhtml.xml file, which specifies configuration for the admin application. It is loaded after the config.xml in requests dealing with the admin store. There is an system.xml file, which configures the interface for the system config application. It is loaded when system config is being initialized. There are also several others: install.xml, wsi.xml, wsdi.xml, api2.xml, compilation.xml, api.xml, jstranslator.xml and widget.xml. They are used and loaded for various tasks in the system.
 
 ######What does "Magento loads modules" mean?
 
-Magento loads modules by getting the module declaration files out of app/etc/modules. 
+Magento loads modules by getting the module declaration files out of app/etc/modules.
 
 ######In which order are Magento modules loaded?
 
@@ -503,7 +500,7 @@ Magento modules are loaded in the following order:
 
 ######Which core class loads modules?
 
-Mage_Core_Model_Config->_loadDeclaredModules
+`Mage_Core_Model_Config->_loadDeclaredModules`
 
 ######What are the consequences of one module depending on another module?
 
@@ -526,15 +523,15 @@ Appears to be no difference.
 
 – Design data is populated
   - Design data is popluated in the `Mage_Core_Controller_Varien_Action->addActionLayoutHandles()` function, which is called as part of the `Mage_Core_Controller_Varien_Action->loadLayout()` method.
- 
+
 – Layout configuration files are parsed
   - Layout configuration files are parsed in `Mage_Core_Model_Layout_Action->merge` function.
-  
+
 – Layout is compiled
   - Layout is compiled as part of the `Mage_Core_Controller_Varien_Action->generateLayoutXml()` function, which is called in `loadLayout()`.
 – Output is rendered
   - Output is rendered with the `Mage_Core_Controller_Varien_Action->renderLayout()` method.
-  
+
 ######Which ways exist to specify the layout update handles that will be
 processed during a request?
 
@@ -594,7 +591,7 @@ Magento flushes output variables using the Front controller after ???
 
 ######What are possible issues when this output is not sent to the browser
 using the typical output mechanism, but is instead sent to the browser
-directly? 
+directly?
 
 The correct headers may not be sent.
 
@@ -609,13 +606,13 @@ Themes should not be used to truly _customize_ core functionality; if you want t
 
 ######How can you implement different designs for different stores using Magento themes?
 
-These are set in the `design_change` table. You can set themes or packages on a store-by-store basis. 
+These are set in the `design_change` table. You can set themes or packages on a store-by-store basis.
 
 If you are looking for small changes from store to store, use different themes from the same package. If you are looking for major changes from store to store, use different packages.
 
 ######In which two ways you can register custom theme?
 
-- Through the admin panel, in System -> Configuration -> Design. 
+- Through the admin panel, in System -> Configuration -> Design.
 - Date-based changes can be made in System -> Design.
 
 ####Define and describe the use of design packages
@@ -677,7 +674,7 @@ The template file is executed inside the context of the block that uses it; ther
 
 ######Is it possible to render a template without a block in Magento?
 
-It is theoretically possible, as you could just `include` the template file. 
+It is theoretically possible, as you could just `include` the template file.
 
 ######Is it possible to have a block without a template in Magento?
 
@@ -706,9 +703,9 @@ Yes. You can instantiate the class and call its `toHtml` method.
 
 A block can be instantiated manually, with `new BlockName();`. It can be added to the current layout manually with `$this->getLayout()->addBlock(BlockName, $name)`.
 
-######How are a block’s children rendered? Once you added a child to the block, can you expect it will be rendered automatically? 
+######How are a block’s children rendered? Once you added a child to the block, can you expect it will be rendered automatically?
 
-It depends on which block your block inherits from. `Mage_Core_Block_Template`, `Mage_Core_Block_Abstract`, `Mage_Core_Block_Text` do not render their children automatically - you need to manually call the child block with `$this->getChildHtml()`. On the other hand, `Mage_Core_Block_Text_List` automatically renders its children. 
+It depends on which block your block inherits from. `Mage_Core_Block_Template`, `Mage_Core_Block_Abstract`, `Mage_Core_Block_Text` do not render their children automatically - you need to manually call the child block with `$this->getChildHtml()`. On the other hand, `Mage_Core_Block_Text_List` automatically renders its children.
 
 ######What is a difference in rendering process for different types of blocks?
 
@@ -750,7 +747,7 @@ The main difference in rendering processes for different types of blocks is in r
 
 `$this->getLayout()->getBlock('block_name')`
 
-######How can block instances be accessed inside install scripts or other model class instances? 
+######How can block instances be accessed inside install scripts or other model class instances?
 
 `Mage::app()->getLayout()->getBlock('block_name')`
 
@@ -819,12 +816,12 @@ Frontend:
 ```
 
 #####Create and add code to pages:
-######How can code be modified or added to Magento pages using the following methods, and in which circumstances are each the above methods more or less appropriate than others? 
+######How can code be modified or added to Magento pages using the following methods, and in which circumstances are each the above methods more or less appropriate than others?
 
 - Template customizations - you can add javascript, css, and pretty much any PHP you desire to a template. Adding complex PHP to a template is a code smell and the complex code moved to the block. Templates are appropriate to add presentation logic to.
 - Layout customizations - you can add blocks, set templates, and call block methods in layout. Layout is appropriate for setting up block parent/child structure and configuring blocks.
 - Overriding block classes - you can do pretty much anything, by overriding the class (`<block><identifier><rewrite><block_name_after_id>New_Block_Name</block_name_after_id>`. I'm of the opinion that says you shouldn't overwrite core code without a really good reason to do so - and should never do it, if at all possible, in a distributed extension. Let the store developer do that.
-- Registering observers on general block events - again, you can do almost anything by listening to `core_block_abstract_to_html_after` and calling `$observer->getBlock()` in your observer method. This is a good idea most of the time, to avoid rewrites and to avoid abusing layout/templates. Templates should handle presentation logic, however. Be careful of performance, general block events are always fired. 
+- Registering observers on general block events - again, you can do almost anything by listening to `core_block_abstract_to_html_after` and calling `$observer->getBlock()` in your observer method. This is a good idea most of the time, to avoid rewrites and to avoid abusing layout/templates. Templates should handle presentation logic, however. Be careful of performance, general block events are always fired.
 
 #####Explain how variables can be passed to block instances via layout XML
 ######How can variables be passed to the block using the following methods, and in which circumstances are each of the above methods more or less appropriate than others?
@@ -856,7 +853,7 @@ To include javascript in a block, you need to ensure that the path is correct, i
 
 `Mage_Page_Block_Html_Head::getCssJsHtml()`, or anything related to layout to ensure that the nodes are being picked up.
 
-#4. Working with Databases in Magento 
+#4. Working with Databases in Magento
 ###Models, resource models, and collections
 ####Describe the basic concepts of models, resource models, and collections, and the relationship they have to one another
 
@@ -888,9 +885,9 @@ Database connections are configured in the app/etc/local.xml file:
   </global>
  </config>
  ```
- 
+
  The connections to use for `core_read`, `core_write`, `default_read`, and `default_write`, `default_setup` and `core_setup` are configured in the config.xml file:
- 
+
  ```
  <config>
   <global>
@@ -900,9 +897,9 @@ Database connections are configured in the app/etc/local.xml file:
       either <use>identifier</use> or details, as above
  ```
  ####Describe how Magento works with database tables
- 
+
  Magento interacts with database tables using resource models. In a resource model's `_construct` method, this `init` method is typically called, passing in the main_table identifier and the id field name as parameters. The main table identifier should correspond to an entity:
- 
+
  ```
  <config>
   <global>
@@ -912,51 +909,51 @@ Database connections are configured in the app/etc/local.xml file:
       <entityName>
        <table>tableName</table>
  ```
- 
+
  Magento uses these entity names to refer to tables. A tablename can be retreived with `Mage_Core_Model_Resource_Db_Abstract::getTable("entity_name"`.
- 
+
  ####Describe the load-and-save process for a regular entity
- 
+
  When the load method is called on a model, the `_beforeLoad` method is called. Next, the resource model is retrieved, and its load method is called. The load method in the resource model executes a query looking for the first row to match the specified field (if none is specified, it looks for the id field). The data is then set to the model instance. The resource model `_afterLoad()` method is called, and then the models after load method is called. Finally the original data is set, and the model is returned.
- 
+
  When the save method is called, there is a check to ensure that the item has data changes. If it does, a transaction is begun on the database, and the `_beforeSave` method is called, followed by the resource model's `_save` method. This method serializes any specified fields, checks to make sure that the object is unique, and inserts/updates it into the database. Fields are then unserialized, and the `_afterSave` methods are called. The transaction is committed if this is all successful, and the transaction is rolled back if there is an error. The `_afterSaveCommit` method is then called, and `$this` is returned.
- 
+
  ####Describe group save operations
- 
- Calling the `save` method on a `Mage_Core_Model_Resource_Db_Collection_Abstract` collection model merely loops through the items and calls the save method on each of them. 
- 
+
+ Calling the `save` method on a `Mage_Core_Model_Resource_Db_Collection_Abstract` collection model merely loops through the items and calls the save method on each of them.
+
  ####Describe the role of Zend_Db_Select in Magento
- 
+
  `Zend_Db_Select` is essentially Magento's alternative to a sql select statement. The various parts of the statement are stored in the `_parts` property. Calling the `Zend_Db_Select::__toString` method generates the parts into the SQL query string.
- 
+
  ####Describe the collection interface (filtering/sorting/grouping)
- 
+
  To filter: `Mage::getResourceModel('my/model_collection')->addFieldToFilter('field_name', 0|['eq' => 0])`
  To sort: `Mage::getResourceModel('my/model_collection')->setOrder('field_name', 'ASC'|'DESC', )`
  To group: `Mage::getResourceModel('my/model_collection')->getSelect()->group('column_to_group_by')`
- 
+
  TALK TO JOSEPH ABOUT THE GROUP BY!
- 
+
  ####Describe the hierarchy of database-related classes in Magento
- 
+
  Most resource models extend `Mage_Core_Model_Resource_Db_Abstract`, which extends `Mage_Core_Model_Resource_Abstract`.
- 
+
  Most collection models extend `Mage_Core_Model_Resource_Db_Collection_Abstract`, which extends `Varien_Data_Collection_Db`, which extends `Varien_Data_Collection`.
- 
+
  ####Describe the role and hierarchy of setup objects in Magento
- 
+
  All setup objects extend `Mage_Core_Model_Resource_Setup`. The role of a setup object is to create/modify the structure of the database. There is also a catalog and eav setup resource. The catalog setup resource is necessary when you want to write to the catalog_eav_attribute table.
- 
+
  ???ASK JOSEPH
- 
+
  ######Which methods exist to access the table of a resource model?
- 
+
  `Mage_Core_Model_Resource_Db_Abstract::getMainTable()`
  `Mage_Core_Model_Resource_Db_Abstract::getTable($entityName)`
  `Mage_Core_Model_Resource_Db_Abstract::getValueTable($entityName, $valueType)`
- 
+
  #######Which methods exist to create joins between tables on collections and on select instances?
- 
+
  Select instances:
  - `Zend_Db_Select::join($tableName, $condition, $columnsToSelect)`
  - `Zend_Db_Select::joinInner($tableName, $condition, $columnsToSelect)`
@@ -965,14 +962,14 @@ Database connections are configured in the app/etc/local.xml file:
  - `Zend_Db_Select::joinFull($name, $condition, $columns)`
  - `Zend_Db_Select::joinCross($name, $columns)`
  - `Zend_Db_Select::joinNatural($name, $columns)`
- 
+
  Collections:
  - `Mage_Core_Model_Resource_Db_Collection_Abstract::join($table, $condition, $columns)`
 
  ######How does Magento support different RDBMSs?
- 
+
  Magento supports different RDBMSs through the use of database adapters. Database adapters implement the `Varien_Db_Adapter_Interface` interface, and can be specified in local.xml:
- 
+
  ```
  <config>
   <global>
@@ -989,7 +986,7 @@ Database connections are configured in the app/etc/local.xml file:
             <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
             <model><![CDATA[mysql4]]></model>
             <type><![CDATA[pdo_mysql]]></type>Specify the type here
-            <pdoType><![CDATA[]]></pdoType> 
+            <pdoType><![CDATA[]]></pdoType>
             <active>1</active>
         </connection>
     </default_setup>
@@ -1009,59 +1006,59 @@ Database connections are configured in the app/etc/local.xml file:
   </global>
  </config>
  ```
- 
+
  ######How do table name lookups work, and what is the purpose of making table names configurable?
- 
- Table name lookups take place in the `Mage_Core_Model_Resource::getTableName($modelEntity)` method. The model entity string is split on the `/` character, and then the entity configuration is pulled from the configuration tree. 
- 
+
+ Table name lookups take place in the `Mage_Core_Model_Resource::getTableName($modelEntity)` method. The model entity string is split on the `/` character, and then the entity configuration is pulled from the configuration tree.
+
  Table names are configurable because this way provides a central repository and access point for table names. It is much more manageable in the instance that a table name needs to be changed in the future.
- 
+
  ######Which events are fired automatically during CRUD operations?
- 
+
  Before save:
  - `Mage::dispatchEvent('model_save_before', array('object'=>$this));`
  - `Mage::dispatchEvent($this->_eventPrefix.'_save_before', ['data_object' => $this, $this->_eventObject => $this]);`
- 
+
  After Save:
  - `Mage::dispatchEvent('model_save_after', array('object'=>$this));`
  - `Mage::dispatchEvent($this->_eventPrefix.'_save_after', ['data_object' => $this, $this->_eventObject => $this]);`
- 
+
  Before delete:
  - `Mage::dispatchEvent('model_delete_before', array('object'=>$this));`
  - `Mage::dispatchEvent($this->_eventPrefix.'_delete_before', ['data_object' => $this, $this->_eventObject => $this]);`
- 
+
  After delete:
  - `Mage::dispatchEvent('model_delete_after', array('object'=>$this));`
  - `Mage::dispatchEvent($this->_eventPrefix.'_delete_after', ['data_object' => $this, $this->_eventObject => $this]);`
- 
+
  After delete commit:
  - `Mage::dispatchEvent('model_delete_commit_after', array('object'=>$this));`
  - `Mage::dispatchEvent($this->_eventPrefix.'_delete_commit_after', ['data_object' => $this, $this->_eventObject => $this);`
- 
+
  Before load:
  - `Mage::dispatchEvent('model_load_before', ['object' => $this, 'field' => field to load on, 'value' => value]);`
  - `Mage::dispatchEvent($this->_eventPrefix.'_load_before', ['data_object' => $this, $this->_eventObject => $this, 'object' => $this, 'field' => field to load on, 'value' => value]);`
- 
+
  After load:
  - `Mage::dispatchEvent('model_load_after', array('object'=>$this));`
  - `Mage::dispatchEvent($this->_eventPrefix.'_load_after', ['data_object' => $this, $this->_eventObject => $this]);`
 
  ######How does Magento figure out if a save() call needs to create an INSERT or an UPDATE query?
- 
+
  If the model instance has an id, Magento checks whether the id exists in the database. If it does, Magento uses an update query. Otherwise, it uses an insert query.
- 
+
  ######How many ways exist to specify filters on a flat table collection?
- 
+
  3:
  - `Varien_Data_Collection_Db::addFieldToFilter('field', '[condition]')`
  - `Varien_Data_Collection::addFilter('field', 'value', 'type')`
  - `Mage_Core_Model_Resource_Db_Collection_Abstract::getSelect()->where(['field' => 'value'])`
- 
+
  #######Which methods exist to influence the ordering of the result set for flat table collections? How do the methods differ?
 
  - `Varien_Data_Collection_Db::setOrder||addOrder($field, 'DESC'|'ASC')` - adds order to the end, giving it last priority
  - `Varien_Data_Collection_Db::unshiftOrder($field, 'DESC'|'ASC')` - adds order to the beginning, giving it first priority
- 
+
  ######Why and how does Magento differentiate between setup, read, and write database resources?
 
 This is because Magento supports master/slave database configuration setups. The different database resources can be configured in app/etc/local.xml.
@@ -1071,7 +1068,7 @@ This is because Magento supports master/slave database configuration setups. The
 
 The install/upgrade workflow is rather simple. The scripts are typically titled with `mysql4-install-version1-version2` or `mysql4-upgrade-version1-version2`. You also need to update the version specified in config.xml, and then your script should run.
 
-######Write install and upgrade scripts using set-up resources 
+######Write install and upgrade scripts using set-up resources
 
 There are a number of set-up resources that are typically used: `Mage_Eav_Model_Entity_Setup` and `Mage_Core_Model_Resource_Setup`. An install script is included into one of these classes, and typically does the following four things:
 
@@ -1184,7 +1181,7 @@ See the above answer. The identical part is that they both have to load/save fro
 ####Describe how to implement the interface of attribute frontend, source, and backend models:
 ######How do attribute models, attribute source models, attribute backend models and attribute frontend models relate to each other?
 
-See the above answer: attribute models house the data, attribute backend models save the data, attribute source models specify the attribute options, and attribute frontend models display the data. 
+See the above answer: attribute models house the data, attribute backend models save the data, attribute source models specify the attribute options, and attribute frontend models display the data.
 
 ######Which methods have to be implemented in a custom source model (or frontend model or backend model)?
 
@@ -1212,7 +1209,7 @@ No. Not every attribute uses a source model, but only the ones with a `select` o
 
 The classes and methods related to updating the EAV attribute values in the flat catalog tables are:
 
-`Mage_Catalog_Model_Resource_Product_Flat_Indexer`, `::updateAttributes($attribute, $storeId)`, `::updateEavAttributes($storeId())`, and `Mage_Catalog_Model_Resource_Category_Flat::synchronize()`. 
+`Mage_Catalog_Model_Resource_Product_Flat_Indexer`, `::updateAttributes($attribute, $storeId)`, `::updateEavAttributes($storeId())`, and `Mage_Catalog_Model_Resource_Category_Flat::synchronize()`.
 
 The attribute's `used_in_product_listing` value needs to be true.
 
@@ -1234,11 +1231,11 @@ Frontend models:
 - `Mage_Eav_Model_Entity_Attribute_Frontend_Datetime` - a date frontend model
 - `Mage_Eav_Model_Entity_Attribute_Fronted_Default` - a simple extension of the abstract model
 
-Backend models: 
+Backend models:
 
 - `Mage_Eav_Model_Entity_Attribute_Backend_Array` - a backend model for attributes with multiple values
 - `Mage_Eav_Model_Entity_Attribute_Backend_Datetime` - a backend model for date values
-- `Mage_Eav_Model_Entity_Attribute_Backend_Default` - a simple extension of the abstract model 
+- `Mage_Eav_Model_Entity_Attribute_Backend_Default` - a simple extension of the abstract model
 - `Mage_Eav_Model_Entity_Attribute_Backend_Increment` - simple increment support for the id
 - `Mage_Eav_Model_Entity_Attribute_Backend_Serialized` - support for serialized data
 - `Mage_Eav_Model_Entity_Attribute_Backend_Store` - for saving an associated store id with an attribute
@@ -1287,3 +1284,60 @@ Their inheritance chains are different, because admin controllers extend `Mage_A
 ######When does Magento figure out which area to use on the current page?
 
 This is determined in the router's `match()` method, when the frontname is found to be `admin`.
+
+######How you can make your controller work under the `/admin` route?
+
+To make your controller work under the `/admin` route, you need to add it to the `<admin>` node in `config.xml`:
+
+```
+<admin>
+    <routers>
+        <adminhtml>
+            <args>
+                <modules>
+                    <Namespace_Modulename before="Mage_Adminhtml">Namespace_Modulename_Adminhtml</Namespace_Modulename>
+                </modules>
+            </args>
+        </adminhtml>
+    </routers>
+</admin>
+```
+
+####Describe the components and types of cache clearing using the adminhtml interface
+######At which moment does Magento check if a user is logged in or not?
+
+When the `controller_action_predispatch` observer is fired, the `Mage_Admin_Model_Observer::actionPreDispatchAdmin()` method is listening. It checks if the user is logged in, and, if not, forwards them to the login screen.
+
+######Which class do most Magento adminhtml blocks extend?
+
+`Mage_Adminhtml_Block_Template` or `Mage_Core_Block_Template`
+
+######What are the roles of adminhtml config?
+
+The adminhtml config (`adminhtml.xml`) is used to configure menu items and permissions for the admin panel.
+
+######What are the differences between the different cache types on the admin cache cleaning page?
+
+Magento has eight different cache types:
+- configuration - caches system and module config data.
+- Layouts - caches layout files
+- Block HTML output - caches the output from individual blocks
+- Translations - stores translation files
+- Collections - stores collections data files
+- EAV types and attributes - caches entity type declarations
+- Web services configuration - caches api.xml
+- Web services configuration - caches api2.xml
+
+In addition, there are these additional three design related caches:
+
+- Catalog images
+- Swatch images
+- CSS/JS from the theme combined to one file
+
+######What is the difference between “flush storage” and “flush Magento cache”?
+
+"Flush cache storage" always flushes all 8 main cache types, while "flush Magento cache" also flushes all types. Twice. Not sure I understand this.
+
+######How you can clear the cache without using the UI?
+
+Calling `Mage::app()->cleanCache([arrayOfTags])`, or `Mage::app()->getCacheInstance()->flush()`
