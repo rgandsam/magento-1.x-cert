@@ -1341,3 +1341,64 @@ In addition, there are these additional three design related caches:
 ######How you can clear the cache without using the UI?
 
 Calling `Mage::app()->cleanCache([arrayOfTags])`, or `Mage::app()->getCacheInstance()->flush()`
+
+##Forms in Magento
+####Define form structure, form templates, grids in Magento, and grid containers and elements:
+######Which block does a standard Magento form extend?
+
+`Mage_Adminhtml_Block_Widget_Form`
+
+######What is the default template for a Magento form?
+
+`widget/form.phtml`
+
+######Describe the role of a form container and its template.
+
+A form container acts as a parent block to the form block, setting buttons on the page, including the child block, etc. The template includes scripts, outputs the form html, and displays content, in general.
+
+######Describe the concept of Form elements, and list system elements implemented in Magento
+
+Form elements are classes that roughly correspond to an HTML form field by the same name. Here is a list of system elements implemented in Magento:
+
+- `Varien_Data_Form_Element_Button` - system implementation of a form button
+- `Varien_Data_Form_Element_Checkbox` - system implementation of a form checkbox
+- `Varien_Data_Form_Element_Checkboxs` - system implementation of a form select
+- `Varien_Data_Form_Element_Collection` - a collection of form elements
+- `Varien_Data_Form_Element_Column` - a system implementation of a form column
+- `Varien_Data_Form_Element_Date` - a date-selector form element
+- `Varien_Data_Form_Element_Datetime` - a date-selector form element that extends `Varien_Data_Form_Element_Date`
+- `Varien_Data_Form_Element_Editor` - an editor form element with WYSIWYG capabilities
+- `Varien_Data_Form_Element_Fieldset` - a form fieldset implementation
+- `Varien_Data_Form_Element_File` - a file element
+- `Varien_Data_Form_Element_Gallery` - a category form input image element
+- `Varien_Data_Form_Element_Hidden` - a hidden form element
+- `Varien_Data_Form_Element_Image` - a category form input image element
+- `Varien_Data_Form_Element_Imagefile` - a form image file element
+- `Varien_Data_Form_Element_Label` - a form label element
+- `Varien_Data_Form_Element_Link` - a link element
+- `Varien_Data_Form_Element_Multiline` - multiline text element
+- `Varien_Data_Form_Element_Multiselect` - a select input with multiple values
+- `Varien_Data_Form_Element_Note` - a form note element
+- `Varien_Data_Form_Element_Obscure` - a text element to obscure text (like a password input)
+- `Varien_Data_Form_Element_Password` - a password input
+- `Varien_Data_Form_Element_Radio` - a radio-button input
+- `Varien_Data_Form_Element_Radios` - a radio-button collection
+- `Varien_Data_Form_Element_Reset` - a form reset element
+- `Varien_Data_Form_Element_Select` - a form select element
+- `Varien_Data_Form_Element_Submit` - a form submit element
+- `Varien_Data_Form_Element_Text` - a form text element
+- `Varien_Data_Form_Element_Textarea` - a form textarea element
+- `Varien_Data_Form_Element_Time` - a form time element
+
+######Describe the concept of fieldsets.
+
+A fieldset is a group of related form elements. Magento implements the fieldset with the `Varien_Data_Form_Element_Fieldset` class. You can add a field with the `::addField` method, and retreive the HTML with the `::getElementHtml()` method.
+
+######How can you render an element with a custom template?
+
+You will need to override the element's `getElementHtml()` method, and return the contents of the template you want to render.
+
+##Grids in Magento
+####Create a simple form and grid for a custom entity
+
+Here is an example of a simple form and grid:
