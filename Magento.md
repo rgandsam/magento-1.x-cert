@@ -1400,5 +1400,129 @@ You will need to override the element's `getElementHtml()` method, and return th
 
 ##Grids in Magento
 ####Create a simple form and grid for a custom entity
+####Describe how to implement advanced Adminhtml Grids and Forms, including editable cells, mass actions, totals, reports, custom filters and renderers, multiple grids on one page, combining grids with forms, and adding custom JavaScript to an admin form
 
-Here is an example of a simple form and grid:
+######Which block class do Magento grid classes typically extend?
+
+`Mage_Adminhtml_Block_Widget_Grid`
+
+######What is the default template for Magento grid instances?
+
+`widget/grid.phtml`
+
+######How can grid filters be customized?
+
+Grid filters can be customized by overriding the filters `getCondition()` method. Grid filters are set with the `filter` attribute for a column, and the `filter_index` key can specify what to filter against in a where (`WHERE filter_index = value`)
+
+######How does Magento actually perform sorting/paging/filtering operations?
+
+Filtering operations are performed by taking the filter query in the `getCondition` and calling `Varien_Data_Collection_Db::addFieldToFilter()` with it.
+
+Sorting operations are performed by calling the `Varien_Data_Collection_Db::setOrder()` method.
+
+Paging operations are also performed in the collection, with the `getSelect()->renderPage()`.
+
+######What protected methods are specific to adminhtml grids, and how are they used?
+
+There are a number of protected methods specific to adminhtml grids:
+
+- `Mage_Adminhtml_Block_Widget_Grid->_prepareLayout()` - creates the child button blocks
+- `Mage_Adminhtml_Block_Widget_Grid->_setFilterValues()` - adds column filters to the collection
+- `Mage_Adminhtml_Block_Widget_Grid->_addColumnFilterToCollection()` - actually does the work of adding the column filters to the collection (via the filter calback, or add field to filter)
+- `Mage_Adminhtml_Block_Widget_Grid->_setCollectionOrder()` - orders the collection
+- `Mage_Adminhtml_Block_Widget_Grid->_prepareCollection()` - one of the three most important. Prepares and loads the collection object (renders the filters, orders)
+- `Mage_Adminhtml_Block_Widget_Grid->_decodeFilter()` - decodes the URL encoded filter value
+- `Mage_Adminhtml_Block_Widget_Grid->_preparePage()` - sets information related to Paging
+- `Mage_Adminhtml_Block_Widget_Grid->_prepareColumns()` - sets the columns, also one of the most important three
+- `Mage_Adminhtml_Block_Widget_Grid->_prepareMassactionBlock(), _prepareMassaction(), _prepareMassactionColumn` - `_prepareMassactionBlock()` is one of the big three, and these are all related to setting up the mass actions.
+- `Mage_Adminhtml_Block_Widget_Grid->_prepareGrid()` - calls the big three
+- `Mage_Adminhtml_Block_Widget_Grid->_afterLoadCollection()` - can be used to do work on the collection items
+
+There are also a number of additional methods related to exports.
+
+######What is the standard column class in a grid, and what is its role?
+
+The standard column class in a grid is `Mage_Adminhtml_Block_Widget_Grid_Column`. It houses the data about the collection.
+
+######What are column renderers used for in Magento?
+
+Column renderers are used to manipulate and display the values in each column. They are set in the `Mage_Adminhtml_Block_Widget_Grid::addColumn()` method, with the `renderer` key.
+
+######How can JavaScript that is used for a Magento grid be customized?
+
+You can define a function in your grid called `getAdditionalJavascript()` which can return javascript.
+
+######What is the role of the grid container class and its template?
+
+The grid container class manages the buttons and labels around the grid and acts as the grid's parent block. The template renders the buttons and labels and the grid.
+
+######What is the programmatic structure of mass actions?
+
+Mass actions are blocks that extend `Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract`. You can add a new mass action by calling it's `addItem()` method, with an itemId, and an array describing the item.
+
+Here is an example:
+
+```
+$item = [
+  'label' => 'My massaction',
+  'url' => $this->getUrl('*/*/myAction'),
+];
+```
+
+The grid is submitted with Javascript, and the Javascript can be customized by overriding the `Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract::addItem()` method.
+
+##System configuration
+####Define the basic terms, elements, and structure of system configuration XML:
+
+System configuration XML is used to
+
+######How can elements in system configuration be rendered with a custom template?
+
+By setting the front-end model to a custom block, that extends Mage_Adminhtml_Block_System_Config_Form_Field, and returns the template in the `_getElementHtml()` method.
+
+######How does the structure of system.xml relate to the rendered elements in the System Configuration view?
+
+The structure of `system.xml` relates by dictating what elements go where. It also specifies the frontend model/type, as well as the source model, sorting order, and what configuration scopes the element is to appear in.
+
+######How can the CSS class of system configuration elements be changed?
+
+By setting the `<frontend_class>` node to the desired value.
+
+######What is the syntax for specifying the options in dropdowns and multiselects?
+
+First, you set your `<frontend_type>` to `select` or `multiselect`. Then you set your `<source_model>` to the desired model that will return your options. That class should have a method called `toArray()` that returns your options in a value/label array. It is also helpful to have a method called `toOptionArray()` that returns an array of arrays, with each nested array as an option with value/label keys and values set for those keys.
+
+######Which classes are used to parse and render system configuration XML?
+
+The `Mage_Core_Model_Config_System` class loads the system configuration XML, and parses it. `Mage_Adminhtml_Block_System_Config_Form` parses out the fields into a `Varien_Data_Form`. The `Mage_Adminhtml_Block_System_Config_Tabs` class parses out the tabs xml into tabs, and renders them in the `system/config/tabs.phtml` template. The `Mage_Adminhtml_Model_Config_Data` class loads the config out of the database.
+
+######What is the syntax to specify a custom renderer for a field in system configuration?
+
+`<frontend_model>Your_Custom_renderer</frontend_model>`. The custom renderer should extend `Mage_Adminhtml_Block_System_Config_Form_Field` and override the `_getElementHtml()` method.
+
+######How does Magento store data for system configuration?
+
+Magento stores data for system configuration in the `core_config_data` table, which is represented by the `Mage_Adminhtml_Model_Config_Data`.
+
+######What is the difference between Mage::getStoreConfig(...) and Mage::getConfig()->getNode(...)?
+
+`Mage::getStoreConfig()` will by default, look for the path in the current store scope code, and looks for the value in the database. `Mage::getConfig()->getNode()` will by default look for the speficied path, but also can accept a scope code and a scope string `Mage::getConfig()->getNode($path, $scope, $scopeCode)`, which becomes `$scope/$scopeCode/path`. It looks for the value in configuration files.
+
+####Describe system configuration scopes:
+######How do different scopes (global, website, store) work in Magento system configuration?
+
+In the `core_config_data` table, there are two columns that store this data: `scope` and `scope_id`.
+
+`scope` will say either `default`, `stores`, or `websites`.
+
+`scope_id` will be `0` for `default`, the store id for `stores`, and the website id for `websites`.
+
+In the `system.xml` files, you can set which scopes you want the config option to appear in:
+
+`<show_in_website>1</show_in_website>`
+`<show_in_store>1</show_in_store>`
+`<show_in_default>1</show_in_default>`
+
+######How does Magento store information about option values and their scopes?
+
+??? Talk to Joseph
