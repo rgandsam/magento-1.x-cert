@@ -21,7 +21,7 @@ Other commonly-used folders include `data` and `Controller`. Every module also h
 
 ######Describe Magento templates and layout files location
 
-Magento stores templates and layout files in the `app/design` directory. There are two difference directories in the `app/design` folder: `adminhtml` and `frontend`. Inside each of those, there are directories for each theme. Inside the theme folder, there is a namespace folder, and then a `layout` and `template` folder. Layout files are stored in the `layout` folder, and template files are stored in the `template` folder.
+Magento stores templates and layout files in the `app/design` directory. There are two difference directories in the `app/design` folder: `adminhtml` and `frontend`. Inside each of those, there are directories for each package. Inside the package folder, there is a folder for each theme, and then a `layout` and `template` folder. Layout files are stored in the `layout` folder, and template files are stored in the `template` folder.
 
 ######Describe Magento skin and JavaScript files location
 
@@ -1526,3 +1526,97 @@ In the `system.xml` files, you can set which scopes you want the config option t
 ######How does Magento store information about option values and their scopes?
 
 ??? Talk to Joseph
+
+##Access Control Lists (ACL) and permissions in Magento
+####Define/identify basic terms and elements of ACL
+
+ACL is an admin panel permissions implementation for Magento. ACL allows the administrator to set up different roles for certain groups of users, and then to only allow users with those roles to access certain resources.
+
+ACL options are configured in a modules `adminhtml.xml` file.
+
+####Use ACL to:
+######Set up a menu item
+
+In a module's `adminhtml.xml` file:
+
+```
+<config>
+  <acl>
+    <resources>
+      <admin>
+        <children>
+          <menu_identifier>
+            <children>
+              <menu_item_identifier>
+                <title>Your Title</title>
+                <sort_order>1</sort_order>
+              </menu_item_identifier>
+            </children>
+          </menu_identifier>
+      </admin>
+    </resources>
+  </acl>
+</config>
+```
+
+######Create appropriate permissions for users
+
+ACL can be used in two ways to create appropriate permissions for users: through the admin panel and through the code.
+
+Admin panel:
+
+1. Select the `System->Permissions->Roles` menu item and click on it.
+2. Click `Add new role`
+3. Create a name, and enter your password.
+4. Select the role resources that the group should have access to, or set it to all.
+5. Click save role.
+6. Click `System->Permissions->Users`
+7. Click the user you want to add the new role.
+8. Click user role, and assign the user to the new group. Save the user.
+
+Code:
+
+Roles are set in the `admin_role` table, rules are in the `admin_rule` table, and users are in the `admin_user` table. To create a new role, and rule, and to assign it to a user, use this code:
+
+```
+$user = Mage::getModel('admin/user')->load(1);
+$role = Mage::getModel('admin/roles');
+$rule = Mage::getModel('admin/rules');
+
+$role->setData([
+    'role_name' => 'Your role name',
+    'role_type' => Mage_Admin_Model_Acl::ROLE_TYPE_GROUP/USER
+])->save();
+
+$rule->setData([
+    'resource_id' => 'admin/cms/poll',
+    'role_id' => $role->getId(),
+    'permission' => Mage_Admin_Model_Rules::RULE_PERMISSION_DENIED
+])->save();
+
+$user->setRoleId($role->getId());
+
+Mage::getResourceModel('admin/user')->add($user);
+```
+
+######Check for permissions in permissions management tree structures
+
+To check for permissions, you can override the `Mage_Adminhtml_Controller_Action::_isAllowed` method.
+
+```
+protected function _isAllowed()
+{
+  return Mage::getSingleton('admin/session')->isAllowed('path/to/resource');
+}
+```
+
+If you need to check outside of a controller, you can use `Mage::getSingleton('admin/session')->isAllowed('path/to/resource');`.
+
+If you need to check in your own code, without a user session, you can use:
+
+```
+$acl = Mage::getResourceModel('admin/acl')->loadAcl();
+$user = Mage::getModel('admin/user')->load($userId);
+$privilege =
+
+$acl->isAllowed($user->getAclRole(), $resource);
