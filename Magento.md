@@ -1620,3 +1620,135 @@ $user = Mage::getModel('admin/user')->load($userId);
 $privilege =
 
 $acl->isAllowed($user->getAclRole(), $resource);
+```
+
+######For what purpose is the `_isAllowed()` method used and which class types implement it?
+
+The `_isAllowed()` method is used to check against the ACL for a specific path for a user. It is implemented in controllers that extend that `Mage_Adminhtml_Controller_Action`.
+
+######What is the XML syntax for adding new menu element?
+
+To add a new ACL menu item, use this syntax:
+
+```
+<config>
+  <menu>
+    <top_level_menu>
+      <children>
+        <menu_item>
+          <title>Title</title>
+          <sort_order>Sort Order</sort_order>
+          <action>*/frontname/controllerName</action>
+          <children>
+            <!--see above-->
+          </children>
+        </menu_item>
+      </children>
+    </top_level_menu>
+  </menu>
+  <acl>
+    <resources>
+      <admin>
+        <children>
+          <top_level_menu>
+            <children>
+              <menu_item>
+                <title>Menu Item</title>
+                <sort_order>1</sort_order>
+              </menu_item>
+            </children>
+          </top_level_menu>
+        </children>
+      </admin>
+    </resources>
+  </acl>
+</config>
+```
+
+######What is adminhtml.xml used for? Which class parses it, and which class applies it?
+
+Adminhtml.xml has two purposes: add menu items, and add ACL items. It is parsed by `Mage_Admin_Model_Config`, and is applied for menu items by `Mage_Adminhtml_Block_Page_Menu`, and is applied by the `Mage_Admin_Model_Session->isAllowed()` method, through the `Mage_Adminhtml_Controller_Action::_isAllowed()` method.
+
+######Where is the code located that processes the ACL XML and where is the code that applies it?
+
+The code that loads it is located in the `Mage_Admin_Model_Config` class, in the `__construct` and `loadAclResources` methods. The code that applies it is in the `Zend_Acl->isAllowed()` method.
+
+######What is the relationship between Magento and Zend_Acl?
+
+Magento's ACL system is built on top of the `Zend_Acl` module. `Mage_Admin_Model_Acl` extends `Zend_Acl`.
+
+######How is ACL information stored in the database?
+
+ACL information is stored in the database in the `admin_rule` table, in a structure like this:
+
+|rule_id|role_id|resource_id|privileges|role_type|assert_id|role_type|permission|
+|---|---|---|---|---|---|---|---|
+|1|1|admin/cms/item|not used currently|also appears not to be used|G/U|allow/deny|
+
+
+##Working with extensions in Magento
+####Describe how to enable and configure extensions
+
+Extensions can be enabled/disabled by going to the admin panel `System -> Configuration` menu, and clicking on the Advanced item under the admin menu. Enable/disable the modules you want to.
+
+####Define Magento extensions and describe the different types of extension available (Community, Core, Commercial)
+
+Magento extensions are bundles of source code that add or modify functionality to a default Magento installlation. A commercial extension is a paid community extension. A community extension is a free, often open-source extension, developed by community members or partners. A core extension ships with Magento and is developed by the core team.
+
+######In which folders are Magento extensions files located?
+
+Core extensions are located in the core code pool, community extensions in the community code pool, and commercial extensions are often located in the local code pool.
+
+######Which files are necessary to make custom modules work?
+
+They need the same files as any other module: a etc directory with a config.xml file, and a Namespace_Modulename.xml file in the app/etc/module/ dir.
+
+######How can module dependencies be manipulated?
+
+Module dependencies can be manipulated through the `depends` node in the Namespace_modulename.xml file.
+
+```
+<config>
+  <modules>
+    <Module_Identifier>
+      <depends>
+        <Dependant_Module/>
+      </depends>
+    </Module_Identifier>
+  </modules>
+</config>
+```
+
+######What is the role of the downloader?
+
+The role of the downloader is to download and install community extensions from Magento Connet.
+
+######How can modules be installed through Magento Connect?
+
+To install a module through Magento Connect, obtain the key through the connect store. Select the `System -> Magento Connect -> Magento Connect Manager` menu item. Sign in with your admin credentials, and paste the extension key. Continue with the install, and then click refresh. You can also install downloaded extensions there, as well.
+
+#7. Catalog
+##Product Types
+####Identify and describe standard product types (simple, configurable, bundled, etc.).
+
+Magento ships with 6 product types:
+
+- simple - a simple, physical, shipped product. Has a unique SKU, and inventory is handled at the simple product level. (`Mage_Catalog_Model_Product_Type_Simple`)
+- bundle - gives the customer the option to bundle products together. (`Mage_Bundle_Model_Product_Type`)
+- virtual - a service product. (`Mage_Catalog_Model_Product_Type_Virtual`)
+- configurable - complex product. A product that the user can configure, to set details. Made up of other simple products. (`Mage_Catalog_Model_Product_Type_Configurable`)
+- grouped - a group of simple products, sold as one. (`Mage_Catalog_Model_Product_Type_Grouped`)
+- downloadable - sends the customer a personalized link with access to their purchase. (`Mage_Downloadable_Model_Product_Type`)
+
+####Create custom product types from scratch or modify existing product types.
+
+New product types can be created by extending `Mage_Catalog_Model_Product_Type_Abstract`, or the model you want to model it after. To modify an existing product type, extend it and then rewrite it.
+
+####
+
+
+----------------------------------------------
+----------------------------------------------
+----------------Tips to remember--------------
+-Event configuration: AEEOIC/M/T (Area, Events, Eventname, Observers, Id for module, class/method/type)
+-Override: GTMRCc (Global, Type, ModuleId, Rewrite, Class to rewrite/to rewrite with)
