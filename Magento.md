@@ -142,7 +142,7 @@ Cron jobs can be set up in Magento inside a modules config.xml file.
     <jobs>
       <job_name>
         <schedule>
-          <cron_expr>Takes cron expressions (ex., 0 9 10 * * 2017 - this would run every day at 10:09am in 2017)</cron_expr>
+          <cron_expr>Takes cron expressions (ex., 9 10 * * 2017 - this would run every day at 10:09am in 2017)</cron_expr>
         </schedule>
         <run>
           <model>Yourmodule_Identifier/Cron::yourMethodName</model>
@@ -151,7 +151,6 @@ Cron jobs can be set up in Magento inside a modules config.xml file.
     </jobs>
   </crontab>
 </config>
-
 ```
 
 ####XML-DOM
@@ -162,8 +161,7 @@ Cron jobs can be set up in Magento inside a modules config.xml file.
 
 Active modules and their configuration are discovered by going into the app/etc/modules/ directory and grabbing every XML file in the directory. The files are then looped through and checked to ensure that the modules are active. The framework then loads the module config files from each modules etc/ directory (Mage_Core_Model_Config->loadModulesConfiguration()) and adds them to the mammoth config object.
 
-######What are the common methods with which the framework accesses its
-configuration values and areas?
+######What are the common methods with which the framework accesses its configuration values and areas?
 
 `Mage::getStoreConfig()`, `Mage_Core_Model_Config (through Mage::app()->getConfig()->getNode() or Mage::getConfig->getNode()` and `Mage::getStoreConfigFlag()`
 
@@ -194,8 +192,7 @@ Magento fires off different default events in the system, often related to the l
 - method, which sets the method to call
 - type, which sets how to retrieve the class (e.g., model, singleton, etc.)
 
-######What is the structure of event observers, and how are properties
-accessed therein?
+######What is the structure of event observers, and how are properties accessed therein?
 
 Event observers are instances of Varien_Event_Observer. Varien_Event_Observer extends from Varien_Object, so properties in an observer can be retrieved/assigned with the “magic getters and setters.” Varien_Event_Observer also has a number of predefined getters and setters, such as get/setCallback, get/setName, and others, so they can also be used.
 
@@ -213,13 +210,11 @@ Internationalization is fairly easy in Magento. You will have a unique store vie
 
 Magento translate files can be obtained from Magento Connect and are placed in the app/locale folder. They are comma-separated strings with english strings and foreign language equivalents. The Mage_Core_Model_Translate class loads the translation files from the translate/modules node in the config tree, the theme translations in the theme's `locale/[languagecode]_[countrycode]/translate.csv` and the translation rows from the core_translate table. The data is then pulled out in pairs and stored in Mage_Core_Model_Translate's `_data` property. When a helper/block's `__()` method is called, the class looks for the string in the config tree. If found, it returns the foreign-language equivalent.
 
-######Describe the advantages and disadvantages of using subdomains and subdirectories
-in internationalization
+######Describe the advantages and disadvantages of using subdomains and subdirectories in internationalization
 
 Subdomains are better because they provide a more "finished" look and national brand. They are also easier, slightly, to link content with, and can be hosted on separate servers which allows for localizing boxes by country or region.  However, subdirectories are better because they increase search engine ratings for the main site. Subdirectories increase name recognition for the main brand. All in all, both are viable options.
 
-######Which method is used for translating strings, and on which types of
-objects is it generally available?
+######Which method is used for translating strings, and on which types of objects is it generally available?
 
 The `__('Your string here')` method is used for translating strings. It is generally available on blocks and helpers.
 
@@ -228,8 +223,7 @@ translations?
 
 When the developer mode is set, all translations not related to a module are removed. Only module level translations are allowed.
 
-######How many options exist to add a custom translation for any given
-string?
+######How many options exist to add a custom translation for any given string?
 
 There are three options:
 
@@ -261,8 +255,7 @@ You register module-level translation files in config.xml like this:
 2. Translations from the theme's translations files
 3. Module-level translations
 
-######How are translation conflicts (when two modules translate the same
-string) processed by Magento?
+######How are translation conflicts (when two modules translate the same string) processed by Magento?
 
 Magento handles translation conflicts by prefixing the duplicated string with it's Namespace_Modulename. You can specify to use Namespace_Modulename:String in your code.
 
@@ -286,8 +279,7 @@ The index.php file has several important roles.
 
 The include path is set up in the beginning of the Mage.php file, before the Mage class definition, by loading the different code pools into one include path and combining it with the original include path. The autoloader is included after the include path is set up, and the auto loader registers itself with `spl_autoload_register` in it's register method.
 
-######How and when does Magento load the base configuration, the module
-configuration, and the database configuration?
+######How and when does Magento load the base configuration, the module configuration, and the database configuration?
 
 Magento loads the base configuration as the first step in the Mage_Core_Model_App->run() method by grabbing and parsing all the XML files in the app/etc folder. The module configuration is loaded next, with the `_initModules` method. It (and it's called functions) grab and parse all the module declaration `*.xml` files in `app/etc/modules`. It then loads the config.xml files from the etc directories. The database configuration is then loaded with the config->loadDb method. It loads the configuration values stored in the DB into the XML tree.
 
@@ -297,8 +289,7 @@ Install/update scripts are run in the Mage_Core_Model_Resource_Setup::applyAllUp
 
 Data scripts are run after the local configuration is loaded and the store and request are initiated, by the Mage_Core_Model_Resource_Setup::applyAllDataUpdates(). Its method of actions is fairly similar to the updates function.
 
-###### When does Magento decide which store view to use, and when is the
-current locale set?
+###### When does Magento decide which store view to use, and when is the current locale set?
 
 The store view is decided in the `Mage_Core_Model_App->_initCurrentStore()` function. The locale is set when system configuration is loaded in.
 
@@ -331,7 +322,7 @@ Here are some possible uses for events fired in the front controller:
 ######Which ways exist in Magento to add router classes?
 
 1. In config.xml
-2.
+
 ```
 <config>
   <default>
@@ -359,7 +350,7 @@ The event listener method would load the router after the config method. The reg
 Here are the events fired in the front controller:
 
 - `controller_front_send_response_before` - could be used to modify output before it is sent, or to set cookies, etc. (Commercebug uses this to add itself)
-- `controller_front_send_response_after` - potentially useful to use like a destructor, for clean-up related tasks. I.E., you want to increment the number of visitors on the site, etc. TALK TO JOSEPH!!
+- `controller_front_send_response_after` - potentially useful to use like a destructor, for clean-up related tasks. I.E., you want to increment the number of visitors on the site, etc.
 - `controller_front_init_before` - useful to modify the request/input
 - `controller_front_init_routers` - useful to add new routers
 
@@ -372,17 +363,17 @@ Front names are set in config.xml:
 
 ```
 <config>
-  <area>
+  <frontend>
     <routers>
       <moduleName>
-        <use>standard (for frontend) || admin (for backend)</use>
+        <use>standard</use>
         <args>
           <module>Namespace_Modulename</module>
           <frontName>frontName</frontName>
         </args>
       </moduleName>
     </routers>
-  </area>
+  </frontend>
 </config>
 ```
 
@@ -396,8 +387,7 @@ The Magento URL rewrite process allows Magento's API-style urls to become SEO-fr
 - The `_getRequestRewriteController` method instantiates the `Mage_Core_Model_Url_Rewrite_Request` class.
 - The `Mage_Core_Model_Url_Rewrite_Request->rewrite()` method is called. It applies the rewrites from the database and from the config.
 
-######What is the purpose of each of the fields in the core_url_rewrite
-table?
+######What is the purpose of each of the fields in the core_url_rewrite table?
 
 - The id_path field - ?
 - The request_path field specifies an SEO-friendly URL that can be used
@@ -600,9 +590,9 @@ The correct headers may not be sent.
 Redirects are made with the `Mage_Core_Controller_Varien_Action->_redirect($path)` method. The redirect headers are set and then, with `Mage_Core_Controller_Response_Http->sendResponse()` are echoed out.
 
 ##3. Rendering
-####Themes in Magento
+##Themes in Magento
 ######How you can use themes to customize core functionality?
-Themes should not be used to truly _customize_ core functionality; if you want to really customize core functionality you should emply a custom module. Themes can be used to customize layouts and templates, however. Whether or not those are "functionality" is debatable.
+Themes should not be used to truly _customize_ core functionality; if you want to really customize core functionality you should employ a custom module. Themes can be used to customize layouts and templates, however. Whether or not those are "functionality" is debatable.
 
 ######How can you implement different designs for different stores using Magento themes?
 
@@ -1523,10 +1513,6 @@ In the `system.xml` files, you can set which scopes you want the config option t
 `<show_in_store>1</show_in_store>`
 `<show_in_default>1</show_in_default>`
 
-######How does Magento store information about option values and their scopes?
-
-??? Talk to Joseph
-
 ##Access Control Lists (ACL) and permissions in Magento
 ####Define/identify basic terms and elements of ACL
 
@@ -1744,11 +1730,842 @@ Magento ships with 6 product types:
 
 New product types can be created by extending `Mage_Catalog_Model_Product_Type_Abstract`, or the model you want to model it after. To modify an existing product type, extend it and then rewrite it.
 
-####
+To create a new product type, you must declare it in the module's `config.xml` file:
 
+```
+<config>
+  <global>
+    <catalog>
+      <product>
+        <type>
+          <TYPENAME>
+            <label>New product</label>
+            <model>Namespace_Modulename/Product_Type</model>
+            <!--other configuration options, such as is_qty, composite, can_use_qty_decimals-->
+          </TYPENAME>
+        </type>
+      </product>
+    </catalog>
+  </global>
+</config>
+```
 
-----------------------------------------------
-----------------------------------------------
+####Identify how custom product types interact with indexing, SQL, and underlying data structures
+
+A custom product type can interact with the database and the underlying product through it's `beforeSave()` method, which is called before a product is saved, or it's `save()` method, which is called after a product is saved. It can also specify if a product is salable, through it's `getIsSalable` method. It is involved in the revieval of SKU's with the getSku method.
+
+The type's `processBuyRequest()` method will be called when the product's method is called.
+
+If a product type's `<price_indexer>` node is set, the specified model will be used for indexing.
+
+######Which product types exist in Magento?
+
+Magento ships with 6 product types by default:
+
+`Mage_Catalog_Model_Product_Type_Grouped`, `Mage_Catalog_Model_Product_Type_Simple`, `Mage_Catalog_Model_Product_Type_Virtual`, `Mage_Catalog_Model_Product_Type_Configurable`, `Mage_Bundle_Model_Product_Type`, `Mage_Downloadable_Model_Product_Type`
+
+######Which product types are implemented as part of the `Mage_Catalog` module, and which are not?
+
+Grouped, simple, virtual, and configurable product types are all implemented as part of the `Mage_Catalog` module. Bundle is implemented in `Mage_Bundle`, and the downloadable product type is implemented in the downloadable module.
+
+######What steps need to be taken in order to implement a custom product type?
+
+See http://www.divisionlab.com/solvingmagento/creating-a-custom-product-type-in-magento/
+
+Basically, declare the type in `config.xml`:
+
+```
+<config>
+  <global>
+    <catalog>
+      <product>
+        <type>
+          <TYPENAME>
+            <label>New product</label>
+            <model>Namespace_Modulename/Product_Type</model>
+            <!--other configuration options, such as is_qty, composite, can_use_qty_decimals, price_model-->
+          </TYPENAME>
+        </type>
+      </product>
+    </catalog>
+  </global>
+</config>
+```
+
+and implement your custom type, extending whatever classes and functions you find necessary to extend.
+
+######How do the different product types handle calculation?
+
+- Simple products use the basic price model, which just returns the price associated with the product itself (Mage_Catalog_Model_Product_Type_Price)
+- Grouped products use their own price model, which returns the products final price based on the child products. (`Mage_Catalog_Model_Product_Type_Price_Grouped`)
+- Virtual products also use the basic price model
+- Configurable products use their own price model, which gets it's final price by adding the total price for the configrable items to the products base price and also adds to total of the associated options prices. (`Mage_Catalog_Model_Product_Type_Price_Configurable`)
+- Bundle products use their own price model, `Mage_Bundle_Model_Product_Price`. This price model has the ability to calculate a minimum or maximum price for the bundle, and calculates the final price based on the total bundle items price and the options price.
+- Downloadable products have their own price model, `Mage_Downloadable_Model_Product_Price`, which calculates the final price based on any additional links purchased as part of the product.
+
+Price models are set in the `<price_model>` node when configuring a product type.
+
+######Which indexing processes does the product type influence?
+
+Product price, through the `<price_indexer>` node.
+
+######Which product types implement a parent-child relationship between product entities?
+
+Configurable, bundle, grouped. `<composite>` node is `1`, and the `<allow_product_types>` node is set to specific types of products.
+
+######Which database tables are shared between product types, and which ones are specific to one product type?
+
+For multipe product types: `catalog_product_relation`.
+For one product type:
+- (configurable) - catalog_product_super_link
+- (bundle) - The `catalog_product_bundle_*` tables, and the `catalog_product_index_price_bundle_*` tables
+- (downloadable) - The `downloadable_*` tables
+
+##Price Generation
+####Identify basic concepts of price generation in Magento
+
+Prices are generated by the price model associated with a product type. By default, simple products use the `Mage_Catalog_Model_Product_Type_Price` model, but when additional functionality is needed, Magento extends this class and adds the functionality on top of it. Downloadable, configurable, bundle, and grouped products use their own price models.
+
+The `Mage_Catalog_Model_Product_Type_Price::getBasePrice()` and `getFinalPrice()` methods are very important to price generation. The `getBasePrice` method calculates the group price, tier price, and special price for the product, and then returns the lowest value of the three. A special price is a promotional price, a tier price is discounts based on the quantity of products purchased, and group pricing is pricing for a specific group of customers. The `getFinalPrice` method applies product options to the price and returns this as the final price.
+
+####Modify and adjust price generation for products (for example, during integration of third-party software)
+
+The easiest way to modify and adjust the price generation mechanisms for products is through the `catalog_product_get_final_price` event. It has the product and quantity specified with it, and allows for a great (although not complete) degree of flexibility over the price generation process.
+
+The other thing you can do is set the final price on the product. If it is set, Magento will not recalculate it
+
+######Under what circumstances are product prices read from the index tables?
+
+Product prices are read from the index tables when a products are in a collection.
+
+######From which modules do classes participate in price calculation?
+
+Price calculation is performed in the price model for a product type, so the `Mage_Catalog`, `Mage_Downloadable` and `Mage_Bundle` modules are involved in price calculations.
+
+######Which ways exist to specify custom prices during runtime?
+
+By observing the `catalog_product_get_final_price` event, or by setting the final price on the product directly.
+
+######How do custom product options influence price calculation?
+
+Options prices are added to the final price in the `getFinalPrice` method.
+
+######How are product tier prices implemented and displayed?
+
+Product tier prices are stored are stored in the `catalog_product_entity_tier_price` table. They are processed in the `Mage_Catalog_Model_Product_Type_Price::_applyTierPrice()` and `getTierPrice()` methods. They are displayed in the `template/catalog/product/view/tierprices.phtml` file.
+
+######What is the priority of the different prices that can be specified for products (price, special price, group price, tier price, etc.)?
+
+Whatever pricing is lowest is given to the customer.
+
+##Category Structure
+####Describe the Category Hierarchy Tree Structure implementation (the internal structure inside the database), including:
+
+The Catalog Hierarchy Tree Structure implementation takes place in the `catalog_category_entity` table. Categorys have parents and children.
+
+######The meaning of `parent_id 0`
+
+`parent_id 0` means that the category is the root category for a store.  
+
+######The construction of paths
+
+Paths are constructed by concatenating the parent category entity ids.
+
+######The attributes required to display a new category in the store
+
+1. `url_key`
+2. `name`
+3. `all_children`
+4. `is_anchor`
+5. `position`
+6. `is_active`
+
+######How is the category hierarchy reflected in the database? Does it differ when multiple root categories are present?
+
+The catalog hierarchy is reflected in the database with the `parent_id` and `path` fields. There can only be one root category in a magento instance (0), however, when the child category has grandparent categories, another slash is added to the path followed by the category id and then another slash.
+
+######How is a catalog tree read from the database tables, with and without flat catalog tables enabled?
+
+It's a bit ambiguous, but if the flat catalog tables are enabled and the app is running on the frontend, the `Mage_Catalog_Model_Resource_Category_Flat` resource model is used in the `Mage_Catalog_Model_Category` model. Otherwise, the `Mage_Catalog_Model_Resource_Category` model is used.
+
+The catalog tree is always read with `Mage_Catalog_Model_Resource_Category_Tree`, whether or not flat catalog tables are enabled.
+
+######How does working with categories differ if the flat catalog is enabled on a model level?
+
+Attributes are read differently: if flat is not enabled, than the `Mage_Catalog_Model_Resource_Category_Flat` is used to read attributes. Otherwise, the `Mage_Catalog_Model_Config` is used to read attributes.
+
+The resource model for the category will be `Mage_Catalog_Model_Resource_Category_Flat`, and the store's `catalog_category_flat_` table will be used.
+
+You can't move categories.
+
+######How is the category parent id path set on new categories?
+
+The parent category ID is loaded in when the category is submitted. Then, it's path is retreived, and the id of the new category is concatenated on to it and then the path is set on the category.
+
+######Which methods exist to read category children and how do they differ?
+
+- `Mage_Catalog_Model_Category->getAllChildren(true)`: returns an array of all children category ID's
+- `Mage_Catalog_Model_Category->getChildren()`: returns a string of all children category ID's, separated by commas
+- `Mage_Catalog_Model_Category->getChildrenCategories()`: returns a collection of loaded, active child categories
+- `Mage_Catalog_Model_Category->getChildrenCategoriesWithInactive()`: returns a unloaded collection of all child categories
+- `Mage_Catalog_Model_Resource_Category->getAllChildren()`: returns an array of all children category ID's with the catagory ID included
+- `Mage_Catalog_Model_Resource_Category->getChildren($category)`: returns an array of all children category ID's
+- `Mage_Catalog_Model_Resource_Category->getChildrenCategories($category)`: returns a loaded collection of active child categories
+- `Mage_Catalog_Model_Resource_Category->getChildrenCategoriesWithInactive($category)`: returns an unloaded collection of all child categories
+- `Mage_Catalog_Model_Resource_Category->getChildrenIds($category)`: returns an array of child ID's, inactive and active
+- `Mage_Catalog_Model_Resource_Category_Flat->getChildrenAmount($category)`: returns a count of all children categories
+- `Mage_Catalog_Model_Resource_Category_Flat->getChildrenCategories($category)`: returns an array of active child categories
+- `Mage_Catalog_Model_Resource_Category_Flat->getChildrenCategoriesWithInactive($category)`: returns an array of all child categories
+- `Mage_Catalog_Model_Resource_Category_Flat->getChildren($category)`: returns an array of all child ids of a category
+- `Mage_Catalog_Model_Resource_Category_Flat->getAllChildren($category)`: returns an array of all child ids of a category, with the parent id included
+
+##Catalog Price Rules
+####Identify how catalog price rules are implemented in Magento
+
+Magento implements catalog price rules in the `Mage_CatalogRule` module. Catalog price rules are based on a certain date or range of time, a discount action and amount, customer groups and website ids.
+
+######How are the catalog price rules related to the product prices?
+
+Catalog price rules created a lowered or raised price for certain customer groups during a specific period of time. Events, specifically the `catalog_product_get_final_price` event, are used to retrieve the rules prices for a product from the `catalogrule_product_price` table.
+
+######How are the catalog price rules stored in the database?
+
+The catalog price rules are stored in the `catalogrule*` tables. The rule records themselves are stored in the `catalogrule` table, while the product rule information is stored in the `catalogrule_product` table. The product pricing information with the rules calculated in is stored in the `catalogrule_product_price` table. The `catalogrule_product_price` table is recalculated at least daily, by the `catalogrule_apply_all` cronjob.
+
+##Other Skills
+####Choose optimal catalog structure (EAV vs. Flat) for a given implementation
+
+Flat will be more performant, but EAV will be better suited to a large number of differences between products. Your best bet is to add a lot of attributes to the flat table, and to mimimize the use of EAV.
+
+####Implement, troubleshoot, and modify Magento tax rules
+
+Magento tax rules allow you to configure taxes by combining customer and product tax classes, with zones and rates, and tax rules. They are implemented in the `Mage_Tax` module.
+
+TALK to Joseph
+
+####Modify, extend, and troubleshoot the Magento layered (“filter”) navigation
+
+The layered navigation is configured in the `Mage/Catalog/Block/Layer/*` blocks. It pulls out attributes that are marked `is_filterable`, and loads their filter blocks. Layered navigation is loaded with the `catalog_category_layered` layout handle.
+
+####Troubleshoot and customize Magento indexes
+
+Magento indexes are used to enhance the speed of the application. To troubleshoot them, you can reindex and check the query; to customize, you need to extend `Mage_Index_Model_Indexer_Abstract` and implement the `getName`, `_processEvent`, and `_registerEvent` methods.
+
+####Describe custom product options in Magento
+
+Custom product options are used to specify things like add-ons to products. They can be used to add to the price, and are figured into the pricing calculations.
+
+######When and how are the catalog flat tables updated when a product is modified?
+
+The catalog flat table entry for the product is removed with `Mage_Catalog_Model_Resource_Product_Flat_Indexer::removeProduct`, recreated with `Mage_Catalog_Model_Resource_Product_Flat_Indexer::saveProduct` and then the related products (children, right?) are updated with `Mage_Catalog_Model_Resource_Product_Flat_Indexer::updateRelationProducts`.
+
+######Which factors are used by the Mage_Tax module to apply the correct tax rate (or rates) to a product price?
+
+- customer group
+- location
+- tax calculation rate
+- product tax class
+- tax calculation rule
+
+######How can attributes with custom source models be integrated into layered navigation filtering?
+
+Create your filter, with the custom HTML for it's rendering. Then, you need to override the `Mage_Catalog_Model_Resource_Eav_Attribute->isIndexable()` method to allow your own filter to be indexed.
+
+######Which classes are responsible for rendering the layered navigation?
+
+`Mage_Catalog_Block_Layer_View`, `Mage_Catalog_Block_Layer_State`
+
+######Which indexes are used for the layered navigation?
+
+The layered navigation reads from the `Mage_Catalog_Model_Product_Indexer_Eav` (`catalog_product_attribute`) and `Mage_Catalog_Model_Product_Indexer_Price` (`catalog_product_price`) indexes
+
+######Which steps are needed to integrate a custom indexer into the framework offered by the Mage_Index module?
+
+You can add the indexer into the framework by adding it to config.xml:
+
+```
+<config>
+  <global>
+    <index>
+      <indexer>
+        <indexer_identifier>
+          <model>Should extend Mage_Index_Model_Indexer_Abstract</model>
+        </indexer_identifier>
+      </indexer>
+    </index>
+  </global>
+</config>
+```
+
+The indexer class must implement the `Mage_Index_Model_Indexer_Abstract::getName()`, `_registerEvent()`, and `_processEvent()` methods. registerEvent specifies what to reindex; processEvent does the indexing.
+
+######How are custom product options stored on quote and order items?
+
+Quote: saved in `sales_flat_quote_item_option`.
+Order: saved in `sales_flat_order_item` table, `product_options` field
+
+######How can you specify custom product options on-the-fly on quote items?
+
+By listening to the `sales_quote_item_set_product` event, and then `getQuoteItem()` on the observer. Then, call `addOption` on the quote item, passing in the option as a parameter.
+
+######How are custom product options copied from quote to order items?
+
+They are set as the product options on the order.
+
+######How are custom product options processed when a product is added to the cart?
+
+They are processed with the product type's `_prepareOptions()` method. The option type is set on the option, the associated product is set, the buy request is set, and the process mode is set. The user values are validated. The `catalog_product_type_prepare_$processMode_options` event is fired.
+
+#8. Checkout
+
+##Checkout components
+####Describe how to modify and effectively customize the quote object, the quote item object, and the address object:
+######What is the quote model used for in Magento?
+
+The quote model (`Mage_Sales_Model_Quote`) is used to store data about an order before it is placed. It stores addresses, items to be ordered, shipping and payment methods, price totals, and customer information.
+
+######What is the shopping cart model used for in Magento?
+
+The shopping cart model is used to manipulate and store items in the quote.
+
+######How does Magento store information about the shopping cart?
+
+In the quote model/`sales_flat_quote*` tables.
+
+######How are different product types processed when added to the cart?
+
+In `Mage_Sales_Model_Quote::addProductAdvanced()`, the product's type model is instantiated, and it's `prepareForCartAdvanced()` method is called.
+
+Custom product options are processed.
+
+If the product has a super-product associated with it (grouped and configurable products), the super product's configuration is added to the buy request.
+
+######What is the difference between shipping and billing address objects in Magento? How is each used in the quote object?
+
+The shipping and billing address objects both are instances of `Mage_Sales_Model_Quote_Address`. They are marked as different by their type.
+
+The shipping address is used to calculate the total for the order and available shipping methods for physical orders, and the billing address is used to calulate for non-physical orders.
+
+######What is the difference in processing quote items for onepage and multishipping checkout in Magento?
+
+Multishipping - there are multiple orders to each shipping address. `quote_address_item` relates multishipping items to addresses.
+Onepage - there is one order created.
+
+Ask Joseph??
+
+###### How does Magento process additional information about products being added to the shopping cart (custom options, components of configurable products, etc.)?
+
+`Mage_Sales_Model_Quote->_addCatalogProduct` adds the options and the parent item is set in `Mage_Sales_Model_Quote->addProductAdvanced`.
+
+Ask Joseph??
+
+######How do products in the shopping cart affect the checkout process?
+
+They can affect the totals, with promotions. Also, some product types do not need shipping information, so shipping steps would not be shown.
+
+######How can the billing and shipping addresses affect the checkout process?
+
+They can affect the totals, because they are used to set the tax, shipping methods, etc.
+
+######When exactly does inventory decrementing occur?
+
+Whey an order is being submitted, before saving it to the database.
+
+######When exactly does card authorization and capturing occur?
+
+When the quote is submitted, the quote is converted to an order for the address. As the order is saved, the `Mage_Sales_Model_Order->place()` method is called. This method calls other methods that eventually call the `Mage_Sales_Model_Order_Payment->place()` method, which captures and authorizes the payment method.
+
+####Explain the database schema for total models:
+######What are total models responsible for in Magento?
+
+Total models are responsible for tracking the cost of an order or quote.
+
+######How you can customize total models?
+
+To customize total models:
+
+To add a new total model, you have to create a new model extending from `Mage_Sales_Model_Quote_Address_Total_Abstract`. You will likely want to override/customize the `collect` method, and perhaps the `fetch` method.
+
+Then, to register it with Magento, you add it to config.xml:
+
+```
+<config>
+  <global>
+    <sales>
+      <quote>
+        <totals>
+          <total_identifier>
+            <class>Module/Total_Model</class>
+            <before>comma,seperated,list of other total modules to run this before</before>
+            <after>same as above</after>
+          </total_identifier>
+        </totals>
+      </quote>
+    </sales>
+  </global>
+</config>
+```
+
+You also can override total models, and could change the order by making your module depend on the other module and then changing the value of the node.
+
+######How can the individual total models be identified for a given checkout process?
+
+Each total model has a code or total identifier associated with it.
+
+######How can the priority of total model execution be customized?
+
+Through the comma-separated list of identifiers in the `<before>` and `<after>` nodes.
+
+######To which objects do total models have access in Magento, and which objects do they usually manipulate?
+
+Total models have access to the shipping address they calculate the totals for, and through that `Mage_Sales_Model_Quote_Address` object, they have access to a number of other objects: the quote, the order, the resource model, the associated items, etc.
+
+They typically manipulate the address with information retreived from the quote.
+
+######Which class runs total models processing?
+
+`Mage_Sales_Model_Quote_Address` calls the methods, but `Mage_Sales_Model_Quote_Address_Total_Collector` processes the total models.
+
+######What is the flow of total model execution?
+
+By default, the total models are executed in this order:
+
+MSRP (`Mage_Sales_Model_Quote_Address_Total_Msrp`)
+Nominal (`Mage_Sales_Model_Quote_Address_Total_Nominal`)
+Subtotal (`Mage_Sales_Model_Quote_Address_Total_Subtotal`)
+Freeshipping (`Mage_SalesRule_Model_Quote_Freeshipping`)
+Shipping (`Mage_Sales_Model_Quote_Address_Total_Shipping`)
+Tax shipping (`Mage_Tax_Model_Sales_Total_Quote_Shipping`)
+Tax subtotal (`Mage_Tax_Model_Sales_Total_Quote_Subtotal`)
+Discount (`Mage_SalesRule_Model_Quote_Discount`)
+Weee (`Mage_Weee_Model_Total_Quote_Weee`)
+Tax (`Mage_Tax_Model_Sales_Total_Quote_Tax`)
+Grand total (`Mage_Sales_Model_Quote_Address_Total_Grand`)
+
+######At which moment(s) are total models executed?
+
+Total models are collected by the `Mage_Sales_Model_Quote_Address_Total_Collector::collectTotals()` method, and are run at the following checkout steps (onepage): initialization, billing information, shipping information, shippping method, payment information, and place order. Also, when an item is added to the cart.
+
+##Shopping Cart price rules
+####Describe how shopping cart price rules work and how they can be customized:
+
+They are based on a set of conditions that specify when the rule applies. They are created in the admin panel.
+######Which module is responsible for shopping cart price rules?
+
+The `Mage_SalesRule` module is responsible for shopping cart price rules.
+
+######What is the difference between shopping cart and catalog price rules?
+
+Catalog price rules are specific to products, while shopping cart price rules are applied to the cart as a whole and are typically based on the cart totals.
+
+######What are the limitations of Magento shopping cart rules?
+
+Some limitations include:
+
+Only one voucher can be applied at once, you cannot base a rule off another rule as rules work independently of each other.
+
+##Shipping and payment methods in Magento
+####Describe the programmatic structure of shipping methods, how to customize existing methods, and how to implement new methods
+
+Shipping methods are defined in config.xml. Their models extend `Mage_Shipping_Model_Carrier_Abstract`, and must provide an implementation of the `collectRates()` method.
+
+```
+<config>
+  <default>
+    <carriers>
+      <carrier_id>
+        <active>0||1</active>
+        <sallowspecific>0</sallowspecific>
+        <model></model>
+        <name></name>
+        <title></title>
+        ...
+      </carrier_id>
+    </carriers>
+  </default>
+</config>
+```
+
+Existing methods can be customized by changing the values in config, or overriding the classes.
+
+####Describe the shipping rates calculation process:
+######How does Magento calculate shipping rates?
+
+The address model is involved in calculating shipping rates: `Mage_Sales_Model_Quote_Address::requestShippingRates()` sends the quote address data as an instance of `Mage_Shipping_Model_Rate_Request` to `Mage_Shipping_Model_Shipping::requestRates()`, which is used collect the different carrier rates from the store's carriers.
+
+######What is the hierarchy of shipping information in Magento?
+
+Carriers (Fedex, UPS) provide rates (next day, flat rate, priority) to customers (you and I).
+
+######How does the `TableRate` shipping method work?
+
+The `Tablerate` shipping method provides a way to specify shipping costs based on a number of conditions compared with the destination: price, weight, or number of items. A csv file with conditions is imported into the database, and then the applicable shipping methods display on the frontend.
+
+######How do US shipping methods (FedEX, UPS, USPS) work?
+
+US shipping methods work by making a request to the carriers API to get the shipping rates. These are in a seperate module, `Mage_Usa`, and extend the `Mage_Usa_Model_Shipping_Carrier_Abstract` model. Fedex and UPS use a SOAP API to communicate, while USPS uses a specialized HTTP API format.
+
+####Describe the programmatic structure of payment methods and how to implement new methods:
+######How can payment method behavior be customized (for example: whether to charge or authorize a credit card; controlling URL redirects; etc.)?
+
+Payment method behavior can be controlled by overriding/customizing the basic payment method models. To register a new payment method, you do so in `config.xml`:
+
+```
+<config>
+  <default>
+    <payment>
+      <paymentcode>
+        <active>1</active>
+        <model>module/modelname</model>
+        <order_status>pending, complete, etc.</order_status>
+        <title>Payment Code Title</title>
+        <allowspecific>0</allow_specific>
+        <group>offline</group>
+      </paymentcode>
+    </payment>
+  </default>
+</config>
+```
+
+These variables are used to configure behavior like charging vs. authorization, etc., and are set on the payment model:
+
+```
+protected $_isGateway                   = false;
+protected $_canOrder                    = false;
+protected $_canAuthorize                = false;
+protected $_canCapture                  = false;
+protected $_canCapturePartial           = false;
+protected $_canCaptureOnce              = false;
+protected $_canRefund                   = false;
+protected $_canRefundInvoicePartial     = false;
+protected $_canVoid                     = false;
+protected $_canUseInternal              = true;
+protected $_canUseCheckout              = true;
+protected $_canUseForMultishipping      = true;
+protected $_isInitializeNeeded          = false;
+protected $_canFetchTransactionInfo     = false;
+protected $_canReviewPayment            = false;
+protected $_canCreateBillingAgreement   = false;
+protected $_canManageRecurringProfiles  = true;
+```
+
+To specify the url to redirect to, set the payment method's `order_place_redirect_url` data.
+
+######Which class is the basic class in the payment method hierarchy?
+
+`Mage_Payment_Model_Method_Abstract`
+
+######How can the stored data of payment methods be customized (credit card numbers, for example)?
+
+The stored data of payment methods is held in an instance of `Mage_Payment_Model_Info`. This method has a number of methods (`has/get/uns/setAdditionalInformation`) that allow for the manipulation of the data stored inside, in addition to the standard `get/set` on `Varien_Object`. If you want to modify the data before it is set, observe the `sales_quote_payment_import_data_before` event.
+
+######What is the difference between payment method and payment classes (such as order_payment, quote_payment, etc.)?
+
+TALK TO JOSEPH!?!?!
+
+######What is the typical structure of the payment method module?
+
+A module that provides a payment method typically has a few important components:
+
+1. `config.xml` - registers the modules information, the payment information
+2. `system.xml` - adds the system configuration for the payment method
+3. The payment model - extends `Mage_Payment_Model_Method_Abstract`, implements the authorize, capture methods, etc.
+4. A form block (for the checkout) - assigned in the model's `_formBlockType` property
+5. An info block (to show progress in the checkout) - assigned in the model's `_infoBlockType` property
+
+######How do payment modules support billing agreements?
+
+Billing agreements implement the `Mage_Payment_Model_Billing_Agreement_MethodInterface`. Billing agreements are integrated out of the box, you need to set the billing agreement by calling `getPayment()->setBillingAgreementData($data)` on the order.
+
+##Magento multishipping implementation
+####Describe how to extend the Magento multishipping implementation
+
+To extend the Magento multishipping implementation, you will need to extend the `Mage_Checkout_Model_Type_Multishipping` class. Multishipping also uses a custom controller, `Mage_Checkout_MultishippingController`.
+
+####Identify limitations of the multishipping implementation:
+
+Multishipping can often be harder to use and understand, require more database storage, and be a bit slower than onepage checkouts.
+
+######How does the storage of quotes for multishipping and onepage checkouts differ?
+
+Quotes for multishipping orders have multiple addresses. The difference lies in the storage of items: the items are stored in the database, related to addresses, in the `sales_flat_quote_address_item` table.
+
+######Which quotes in a multishipping checkout flow will be virtual?
+
+Quotes that only have virtual items.
+
+######What is the difference in the multishipping processing for a quote with virtual products in it?
+
+When an order has virtual items, the billing address will be used to process the order. Quotes with virtual items create an additional order from the billing address containing those items.
+
+######How can different product types be split among multiple addresses when using multishipping in Magento?
+
+Grouped products can be split among multiple addresses when using multishipping because they are added to the cart as separate items. Bundled products, however, are added as one item and, thus, cannot be split among multiple addresses.
+
+######How many times are total models executed on a multishipping checkout in Magento?
+
+Total models are run a lot when using multishipping in Magento: 2x when setting the billing address, 1x when setting the payment method, 1x when preparing the order based on the address, 1x when saving the quote, and (optionally) 1x when updating the shipping address. 6 times in addition to the normal total calculation per address, which can be more because of multiple shipping addresses.
+
+######Which model is responsible for multishipping checkout in Magento?
+
+`Mage_Checkout_Model_Type_Multishipping`
+
+#9- Sales and Customers
+##Sales
+####Describe order creation in the admin
+
+Orders are created in the magento admin by filling out a form with a lot of data pertaining to the order. The order creation model (`Mage_Adminhtml_Model_Sales_Order_Create`) is provided with the data which is then used to create the actual order.
+
+####Describe the differences in order creation between the frontend and the admin:
+
+The admin panel uses an order creation model to create orders, whereas the frontend just creates the order models directly. Also, unless there is an error, the quote object is stored in the seesion for the admin, not the database like the frontend. All products can be added to the order in the admin, as opposed to frontend orders which can only add products they have access to.
+
+######Which classes are involved in order creation in the admin? What are their roles (especially the role of adminhtml classes)?
+
+- `Mage_Adminhtml_Sales_Order_CreateController` - controller for the order creation process in the admin panel
+- `Mage_Adminhtml_Model_Sales_Order_Create` - order creation model that takes the data received from the admin user and creates the appropriate order. Also manages the customer data presented to the admin user
+
+######How does Magento calculate price when an order is created from the admin?
+
+When products are added to the order with the special grid, the `Mage_Adminhtml_Model_Sales_Order_Create->addProduct()` method is called. It adds the product to the quote, and then sets the `_needCollect` flag on that order to be true. The totals are then collected, and then sent back to the admin.
+
+######Which steps are necessary in order to create an order from the admin?
+
+1. Click on the `Orders` item on the `Sales` menu.
+2. In the upper-right corner, click on `Create New Order`.
+3. From the next screen, choose or create a customer.
+4. Then, for multi-store Magento instances, select the store.
+5. Fill out the order creation information, and add products.
+6. In the lower-right corner, click `Submit Order`.
+
+######What happens when existing orders are edited in the admin?
+
+Reordering and editing actually use the same internal method. When an existing order is edited, it is not truly edited but copied. The old order is canceled and the new order is set as a child of the old order.
+
+######What is the difference between order status and order state?
+
+Order status is used by and displayed to merchants to track order flow. Order state is used by Magento to keep track of where the system is in terms of order processing. One state can have multiple statuses.
+
+####Card operations (capturing and authorization):
+######Which classes and methods are responsible for credit card operations (for example authorization or capturing)?
+
+Capturing: `Mage_Sales_Model_Order_Invoice->capture()`, `Mage_Sales_Model_Order_Payment->place()` (handles both capturing and authorization), `Mage_Payment_Model_Method_Abstract->capture()`
+Authorization: `Mage_Sales_Model_Order_Payment->authorize()`, `Mage_Sales_Model_Order_Payment->place()`
+
+######What is the difference between “pay” and “capture” operations?
+
+Pay: sets the invoice state as paid, works for both online and offline.
+Capture: when actual payment is captured online. Pay is called in capture.
+
+######What are the roles of the `order`, `order_payment`, `invoice`, and `payment` methods in the process of charging a card?
+
+TALK TO JOSEPH!
+
+######What are the roles of the total models in the context of the invoice object?
+
+They are used to display the total amounts to invoice and to capture.
+
+######How does Magento store information about invoices?
+
+In the `sales_flat_invoice*` tables. The `sales_flat_invoice` table is the main invoice entity, invoice items are stored in the `sales_flat_invoice_item` table, invoice comments are stored in the `sales_flat_invoice_comment` table, and ASK JOSEPH WHAT IS IN THE `sales_flat_invoice_grid` table (lighter representation to deal with data?)
+
+####Describe the order shipment structure and process:
+
+The order can be marked as shipped in the admin panel. Selected items or a whole order can be shipped at once. Order shipments are represented by the `Mage_Sales_Model_Order_Shipment` class.
+
+######How shipment templates be customized?
+
+The various shipment email templates are set up in system config, and can be changed in the Sales Emails -> Shipment config section.
+
+######How can different items from a single order be shipped to multiple addresses? Is it possible at all?
+
+It is possible by using the Magento Multishipping checkout implementation.
+
+######How does Magento store shipping and tracking information?
+
+Shipping and tracking information is stored in the DB, similar to invoicing information:
+
+- tracking info is stored in the `sales_flat_shipment_track` table, and managed with `Mage_Sales_Model_Order_Shipment_Track`
+- shipping info is stored in a number of tables: `sales_flat_shipment` is the main one, comments are in `sales_flat_shipment_comment`, and shipment items are in `sales_flat_shipment_item`.
+
+####Describe the architecture and processing of refunds:
+
+In Magento, refunds are known as credit memos. The `Mage_Sales_Model_Order_Creditmemo` class is the base refund class, and it interacts with the order payment model, the credit memo totals, and the payment method to issue refunds for items. Refunds can be issued for only one item, or an entire order.
+
+######Which classes are involved, and which tables are used to store refund information?
+
+- `Mage_Sales_Model_Order_Creditmemo->refund()`, `Mage_Sales_Model_Order_Payment->refund()`, `Mage_Payment_Model_Method_*->refund()`, `Mage_Adminhtml_Sales_Order_CreditmemoController`
+
+- `sales_flat_creditmemo*`. `sales_flat_creditmemo` is the main entity, `sales_flat_creditmemo_comment` is for comments, `sales_flat_creditmemo_item` for individual items.
+
+######How does Magento process taxes when refunding an order?
+
+Magento processes taxes by recalculating the taxes based on the tax charged on the item and the tax on shipping. If the shipping costs have changed, Magento employs some very fancy math to calculate this.
+
+######How does Magento process shipping fees when refunding an order?
+
+The admin can specify what parts of shipping to refund. Magento ensures that not more shipping is refunded than was originally charged.
+
+######What is the difference between online and offline refunding?
+
+The difference between online and offline refunding is that online refunding involves credit cards or online payment methods, while offline refunding involves cash, checks, etc. Another way to put it: they both create a credit memo, but online refunding also integrates with the payment gateway to void or refund the transaction.
+
+######What is the role of the credit memo total models in Magento?
+
+Credit memo total models are used to calculate the credit memo totals to refund.
+
+####Describe the implementation of the three partial order operations (partial invoice, partial shipping, and partial refund):
+
+Partial order operations allow a shipment, invoice, or credit memo to be created for only selected items from an order. Partial operations set the order state to processing until all the items have been processed.
+
+######How do partial order operations affect order state?
+
+Partial operations set the order state to processing.
+
+######How is data for partial operations stored?
+
+Data for partial operations is stored in the DB (`sales_flat_invoice_item`, `sales_flat_shipment_item`, and `sales_flat_creditmemo_item`).
+
+####Describe cancel operations:
+
+Magento offers the ability to cancel most order entities. Cancellation is available through the admin panel. Orders can be mass-canceled.
+
+######What cancel operations are available for the various order entities in Magento (order, order item, shipment, invoice, credit memo)? Do all of them support cancellation?
+
+Orders can be canceled, order items can be canceled (or partially canceled, as in canceling a specific quantity, probably closer to an edit), shipments cannot be canceled, invoices can be canceled and voided (voiding an invoice also voids the authorization on the payment), and credit memos can be canceled.
+
+######How are taxes processed during cancel operations?
+
+- Orders: when an order is canceled, all tax charges are canceled.
+- Order items: when an order item is canceled, the base tax amount is multiplied by the quantity canceled, and then divided by the quantity originally ordered. That tax amount is marked as canceled.
+- Invoices: the order's invoiced tax totals are adjusted based on the invoice amount to cancel.
+- Credit memos: the order's refunded tax totals are adjusted based on the creditmemo amount to cancel.
+
+####Describe the architecture of the customer module
+
+The customer module is a core Magento module that uses an EAV-based database system to store, manipulate and process customer information.
+
+####Describe the role of customer addresses
+
+Customer addresses can be saved to the database, and related to the customer. This allows for faster checkout times. Customer addresses are EAV, so attributes can be easily added to them. Taxes are also calculated on the shipping address.
+
+####Describe how to add, modify, and display customer attributes:
+
+Customer models use the EAV-based database structure.
+
+######What is the structure of tables in which customer information is stored?
+
+The customer information is stored in an EAV-based database schema. The `customer_entity` table is used to store the core customer data, and then the EAV tables (`customer_entity_`) are used to store related data by type (`text`, `varchar`, `datetime`, `decimal`, `int`). Customer addresses are also EAV-based, and are stored in the `customer_address_entity*` tables.
+
+######What is the customer resource model?
+
+`Mage_Customer_Model_Resource_Customer`
+
+######How is customer information validated?
+
+Customer information stored in attributes is validated with the `validate_rules` associated with an attribute. The validate rules are a serialized array of rules.
+
+######How can customer-related email templates be manipulated?
+
+Customer-related email templates can be manipulated in a number of different ways:
+
+1. through the `Transactional emails` page in the admin
+2. Assigning different templates in the admin system config -> customers section.
+3. Setting default options for the transactional emails through system config aftering ensuring the the `Mage_Customer` model will load first.
+4. New templates can be added in the `global->template->email` node in config.
+
+######What is the difference between shipping and billing addresses for a customer?
+
+No difference. From the customer's perspective, all addresses are added to the address book.
+
+######How does the number of shipping and billing address entities affect the frontend interface for customers?
+
+Saved addresses will be displayed as options in a select box during checkout; there is an addresses list in the customer account page and the default address can be set there, and other addresses managed.
+
+######How does customer information affect prices and taxes?
+
+Specific prices (with Catalog and shopping price rules) can be set based on the customer's group. Taxes can also be set based on the customer group.
+
+######How can attributes be added to a customer address? How are custom address attributes you added converted to an order address?
+
+Attributes can be added to customer addresses through setup scripts. You will use `Mage_Customer_Model_Entity_Setup` as your parent class. `customer_address` will be the entity you add it to.
+
+######Can a customer be added to two customer groups at the same time?
+
+No. A customer can, by default, be in only one group at a time.
+
+#10. Advanced features
+##Widgets
+####Create frontend widgets and describe widget architecture:
+
+Widgets are little reusable and easily configurable blocks for use on the Magento frontend. Widgets needs to be identified in the `system/widget.xml` file, and need an associated block to display. Widget parameters can be setup in the widget file, and are made available in the block as object data.
+
+######What classes are typically involved in Magento widget architecture?
+
+The widget system architecture is driven by the `Mage_Widge_Model_Widget` class. Frontend widget blocks implement the `Mage_Widget_Block_Interface` interface. Frontend widget blocks typically extend `Mage_Core_Block_Template`.
+
+######How are admin-configurable parameters and their options specified?
+
+These are specified in the `config/widget.xml` file. The file structure looks something like this:
+
+```
+<?xml version="1.0" ?>
+<widgets>
+	<Namespace_Modulename type="Namespace_Modulename/Widget_Block" module="Namespace_Modulename">
+		<name>Widget name</name>
+		<description type="desc">Widget description</description>
+		<parameters>
+      <parameter_identifier>
+          <visible>1</visible>
+          <label>label</label>
+          <type>type, similar to system config</type>
+      </parameter_identifier>
+		</parameters>
+	</Namespace_Modulename>
+</widgets>
+```
+
+##API
+####Use the Magento API to implement third party integrations
+
+The Magento API can be used to integrate with third party applications. Magento's SOAP API allows for an easy-to-use interface with the API.
+
+####Extend the existing Magento API to allow for deeper integrations into third party products
+
+You can write your own API's to integrate the Magento API with custom modules, or to add new functionality. You need an API declaration file (`etc/api.xml`). Then, it's a simple process to write a model that has the necessary functionality. The model will extend from `Mage_Api_Model_Resource_Abstract`.
+
+####Describe the different Web Service APIs available within the Magento Core
+
+The Magento core offers a number of different APIs: SOAP v1, SOAP v2, XML-RPC, and a RESTful API.
+
+SOAPv1 vs v2: When using Magento v1 API, we access resources via call method and provide API method name and parameters as parameters of call method. When using Magento v2 API, we access resources via real method name and we provide parameters as defined in WSDL for each specific method.
+
+The XML_RPC API is very similar to the v1 API (they use the same interaction syntax and config files).
+
+The RESTful API is newer, uses HTTP verbs and three-legged authentication protocol, and is a bit harder to extend.
+
+####Describe the advantages and disadvantages of the available Web Service APIs in Magento
+
+(Dis-)Advantages of SOAP:
+
+well defined web-service
+has pre-built standards (SOAPv1, SOAPv2, SOAPv2 WS-I)
+works well in enterprise environments (due to standards)
+some tools can be automated by using the WSDL
+heavyweight compared to REST
+
+(Dis-)Advantages of REST:
+
+easier to use
+more flexible
+smaller learning curve
+effictient/lightweight compared to SOAP
+no defined web-service structure (no WSDL)
+
 ----------------Tips to remember--------------
--Event configuration: AEEOIC/M/T (Area, Events, Eventname, Observers, Id for module, class/method/type)
--Override: GTMRCc (Global, Type, ModuleId, Rewrite, Class to rewrite/to rewrite with)
+- Event configuration: AEEOIC/M/T (Area, Events, Eventname, Observers, Id for module, class/method/type)
+- Override: GTIRCc (Global, Type, ModuleId, Rewrite, Class to rewrite/to rewrite with)
+- Cron: CJIscRm (Crontab, Jobs, Name of job, schedule, cron_expr, Run, model)
+- Translation files: ATMIFDfile (Area, translate, modules, identifier, files, default, filename)
+- Database connections: ARIC (Area, resources, identifier, connection)
+- - connection types: `core_read`, `core_setup`, `core_write`, `default_read`, `default_setup`, `default_write`
